@@ -1,0 +1,25 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "smartq-rwanda",
+          "appId": "1:1097516457844:android:4b91c230ecc06848f75621",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "smartq-rwanda",
+          "configurations": {
+            "android": "1:1097516457844:android:4b91c230ecc06848f75621",
+            "web": "1:1097516457844:web:1c799e79e337741df75621"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}
