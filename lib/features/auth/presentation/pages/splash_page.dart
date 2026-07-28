@@ -73,7 +73,7 @@ class _SplashPageState extends State<SplashPage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
+                  Text(
                     'SMARTQ',
                     style: TextStyle(
                       fontSize: 24,
@@ -83,7 +83,7 @@ class _SplashPageState extends State<SplashPage> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
+                  Text(
                     'SmartQ-Rwanda',
                     style: TextStyle(
                       fontSize: 14,
@@ -92,7 +92,7 @@ class _SplashPageState extends State<SplashPage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const SizedBox(
+                  SizedBox(
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(
@@ -101,7 +101,7 @@ class _SplashPageState extends State<SplashPage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     AppConstants.appTagline,
                     style: TextStyle(
                       fontSize: 12,

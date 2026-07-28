@@ -105,7 +105,7 @@ class _StaffStatsPageState extends State<StaffStatsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Today\'s Summary',
                     style: TextStyle(
                       fontSize: 20,
@@ -116,7 +116,7 @@ class _StaffStatsPageState extends State<StaffStatsPage> {
                   const SizedBox(height: 4),
                   Text(
                     'Assigned Service Desk ID: $serviceId',
-                    style: const TextStyle(fontSize: 12, color: AppColors.outline),
+                    style: TextStyle(fontSize: 12, color: AppColors.outline),
                   ),
                   const SizedBox(height: 20),
 
@@ -158,7 +158,7 @@ class _StaffStatsPageState extends State<StaffStatsPage> {
                   const SizedBox(height: 24),
 
                   // Recent Served History
-                  const Text(
+                  Text(
                     'Recent Served Customers',
                     style: TextStyle(
                       fontSize: 18,
@@ -207,7 +207,7 @@ class _StaffStatsPageState extends State<StaffStatsPage> {
                                     ),
                                     child: Text(
                                       ticket.ticketNumber,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w800,
                                         color: AppColors.primary,
@@ -220,7 +220,7 @@ class _StaffStatsPageState extends State<StaffStatsPage> {
                                     children: [
                                       Text(
                                         ticket.serviceName ?? 'Service Desk',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600,
                                           color: AppColors.onSurface,
@@ -228,7 +228,7 @@ class _StaffStatsPageState extends State<StaffStatsPage> {
                                       ),
                                       Text(
                                         timeStr,
-                                        style: const TextStyle(fontSize: 12, color: AppColors.outline),
+                                        style: TextStyle(fontSize: 12, color: AppColors.outline),
                                       ),
                                     ],
                                   ),
@@ -236,7 +236,7 @@ class _StaffStatsPageState extends State<StaffStatsPage> {
                               ),
                               Text(
                                 durationMins > 0 ? '${durationMins}m' : 'Completed',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w700,
                                   color: AppColors.success,

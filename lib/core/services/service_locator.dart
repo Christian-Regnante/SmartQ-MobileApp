@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'admin_initialization_service.dart';
 import 'user_provisioning_service.dart';
+import '../theme/theme_cubit.dart';
 
 // Auth
 import '../../features/auth/data/datasources/auth_remote_data_source.dart';
@@ -56,6 +57,9 @@ Future<void> initServiceLocator() async {
   // Shared Preferences
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+
+  // Theme
+  sl.registerLazySingleton<ThemeCubit>(() => ThemeCubit(sharedPreferences));
 
   // Firebase External Dependencies
   sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);

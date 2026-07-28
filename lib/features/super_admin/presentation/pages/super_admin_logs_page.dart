@@ -65,7 +65,7 @@ class _SuperAdminLogsPageState extends State<SuperAdminLogsPage> {
                               color: AppColors.primaryContainer.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: const Icon(Icons.history_rounded, color: AppColors.primary),
+                            child: Icon(Icons.history_rounded, color: AppColors.primary),
                           ),
                           const SizedBox(width: 14),
                           Expanded(
@@ -74,7 +74,7 @@ class _SuperAdminLogsPageState extends State<SuperAdminLogsPage> {
                               children: [
                                 Text(
                                   action,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700,
                                     color: AppColors.onSurface,
@@ -83,14 +83,14 @@ class _SuperAdminLogsPageState extends State<SuperAdminLogsPage> {
                                 const SizedBox(height: 2),
                                 Text(
                                   details,
-                                  style: const TextStyle(fontSize: 12, color: AppColors.onSurfaceVariant),
+                                  style: TextStyle(fontSize: 12, color: AppColors.onSurfaceVariant),
                                 ),
                               ],
                             ),
                           ),
                           Text(
                             timeStr,
-                            style: const TextStyle(fontSize: 11, color: AppColors.outline),
+                            style: TextStyle(fontSize: 11, color: AppColors.outline),
                           ),
                         ],
                       ),

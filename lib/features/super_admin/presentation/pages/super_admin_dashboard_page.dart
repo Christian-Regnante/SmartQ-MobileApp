@@ -91,7 +91,7 @@ class _SuperAdminDashboardPageState extends State<SuperAdminDashboardPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('SmartQ Master Portal'),
+        title: Text('SmartQ Master Portal'),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -103,13 +103,13 @@ class _SuperAdminDashboardPageState extends State<SuperAdminDashboardPage> {
               // Header
               Text(
                 'Master Control Panel, $superAdminName 👑',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
                   color: AppColors.onSurface,
                 ),
               ),
-              const Text(
+              Text(
                 'National Multi-Tenant Queue Management Infrastructure',
                 style: TextStyle(fontSize: 13, color: AppColors.outline),
               ),
@@ -135,7 +135,7 @@ class _SuperAdminDashboardPageState extends State<SuperAdminDashboardPage> {
                         icon: Icons.apartment_rounded,
                         valueColor: AppColors.primary,
                       ),
-                      const StatCard(
+                      StatCard(
                         label: 'National Tickets Today',
                         value: '0',
                         icon: Icons.confirmation_number_rounded,
@@ -173,7 +173,7 @@ class _SuperAdminDashboardPageState extends State<SuperAdminDashboardPage> {
                         ),
                       ),
                       icon: const Icon(Icons.domain_add_rounded),
-                      label: const Text('Register Institution'),
+                      label: Text('Register Institution'),
                       onPressed: _showAddOrgDialog,
                     ),
                   ),
@@ -182,7 +182,7 @@ class _SuperAdminDashboardPageState extends State<SuperAdminDashboardPage> {
               const SizedBox(height: 24),
 
               // Registered Institutions Overview
-              const Text(
+              Text(
                 'Registered Institutions',
                 style: TextStyle(
                   fontSize: 18,
@@ -226,7 +226,7 @@ class _SuperAdminDashboardPageState extends State<SuperAdminDashboardPage> {
                                   color: AppColors.surfaceContainerLow,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: const Icon(Icons.business_rounded, color: AppColors.primary),
+                                child: Icon(Icons.business_rounded, color: AppColors.primary),
                               ),
                               const SizedBox(width: 14),
                               Expanded(
@@ -235,7 +235,7 @@ class _SuperAdminDashboardPageState extends State<SuperAdminDashboardPage> {
                                   children: [
                                     Text(
                                       org.name,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w700,
                                         color: AppColors.onSurface,
@@ -243,7 +243,7 @@ class _SuperAdminDashboardPageState extends State<SuperAdminDashboardPage> {
                                     ),
                                     Text(
                                       org.location,
-                                      style: const TextStyle(fontSize: 12, color: AppColors.outline),
+                                      style: TextStyle(fontSize: 12, color: AppColors.outline),
                                     ),
                                   ],
                                 ),
@@ -254,7 +254,7 @@ class _SuperAdminDashboardPageState extends State<SuperAdminDashboardPage> {
                                   color: AppColors.success.withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: const Text(
+                                child: Text(
                                   'ACTIVE',
                                   style: TextStyle(
                                     fontSize: 11,

@@ -62,7 +62,7 @@ class _AdminAnalyticsPageState extends State<AdminAnalyticsPage> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Live Performance Overview',
                       style: TextStyle(
                         fontSize: 18,
@@ -73,7 +73,7 @@ class _AdminAnalyticsPageState extends State<AdminAnalyticsPage> {
                     const SizedBox(height: 4),
                     Text(
                       'Real-time metrics for Organization ID: $orgId',
-                      style: const TextStyle(fontSize: 12, color: AppColors.outline),
+                      style: TextStyle(fontSize: 12, color: AppColors.outline),
                     ),
                     const SizedBox(height: 20),
 
@@ -115,7 +115,7 @@ class _AdminAnalyticsPageState extends State<AdminAnalyticsPage> {
                     const SizedBox(height: 24),
 
                     // Service Desk Traffic Breakdown
-                    const Text(
+                    Text(
                       'Service Desk Traffic Breakdown',
                       style: TextStyle(
                         fontSize: 18,
@@ -149,7 +149,7 @@ class _AdminAnalyticsPageState extends State<AdminAnalyticsPage> {
                                       children: [
                                         Text(service.name, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
                                         Text('${service.counterNumber ?? "Desk"} • ${service.averageServiceTimeMinutes}m avg wait',
-                                            style: const TextStyle(fontSize: 11, color: AppColors.outline)),
+                                            style: TextStyle(fontSize: 11, color: AppColors.outline)),
                                       ],
                                     ),
                                   ),
@@ -169,7 +169,7 @@ class _AdminAnalyticsPageState extends State<AdminAnalyticsPage> {
                                         const SizedBox(width: 8),
                                         Text(
                                           '${service.currentQueueCount}',
-                                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.primary),
+                                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.primary),
                                         ),
                                       ],
                                     ),

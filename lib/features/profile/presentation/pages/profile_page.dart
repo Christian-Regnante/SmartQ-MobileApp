@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/route_constants.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/theme_cubit.dart';
 import '../../../../core/widgets/neumorphic_button.dart';
 import '../../../../core/widgets/neumorphic_card.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
@@ -18,7 +19,6 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   String _selectedLanguage = 'English';
-  bool _isDarkMode = false;
 
   void _onLogoutSubmitted() {
     showDialog(
@@ -37,7 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
               context.read<AuthBloc>().add(AuthLogoutRequested());
               context.go(RouteConstants.login);
             },
-            child: const Text('Logout', style: TextStyle(color: AppColors.error)),
+            child: Text('Logout', style: TextStyle(color: AppColors.error)),
           ),
         ],
       ),
@@ -47,6 +47,8 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final authState = context.watch<AuthBloc>().state;
+    final themeCubit = context.watch<ThemeCubit>();
+    final isDarkMode = themeCubit.isDarkMode;
 
     final user = authState is Authenticated ? authState.user : null;
     final userName = user?.fullName ?? 'User Account';
@@ -57,7 +59,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Profile & Settings'),
+        title: Text('Profile & Settings'),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -65,7 +67,6 @@ class _ProfilePageState extends State<ProfilePage> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              // User Card Header
               NeumorphicCard(
                 borderRadius: 24,
                 padding: const EdgeInsets.all(24),
@@ -81,7 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       alignment: Alignment.center,
                       child: Text(
                         userName.isNotEmpty ? userName[0].toUpperCase() : 'U',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.w800,
                           color: AppColors.primary,
@@ -91,7 +92,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     const SizedBox(height: 14),
                     Text(
                       userName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
                         color: AppColors.onSurface,
@@ -100,7 +101,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     const SizedBox(height: 2),
                     Text(
                       userEmail,
-                      style: const TextStyle(fontSize: 13, color: AppColors.outline),
+                      style: TextStyle(fontSize: 13, color: AppColors.outline),
                     ),
                     const SizedBox(height: 12),
                     Container(
@@ -111,7 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       child: Text(
                         userRoleStr.toUpperCase(),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
                           color: AppColors.primary,
@@ -122,8 +123,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               const SizedBox(height: 24),
-
-              // Preferences & Settings List Card
               NeumorphicCard(
                 borderRadius: 20,
                 padding: const EdgeInsets.all(12),
@@ -132,19 +131,25 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Column(
                     children: [
                       ListTile(
-                        leading: const Icon(Icons.phone_outlined, color: AppColors.primary),
-                        title: const Text('Phone Number', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                        leading: Icon(Icons.phone_outlined, color: AppColors.primary),
+                        title: Text(
+                          'Phone Number',
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                        ),
                         subtitle: Text(userPhone, style: const TextStyle(fontSize: 12)),
-                        trailing: const Icon(Icons.edit_outlined, size: 18, color: AppColors.outline),
+                        trailing: Icon(Icons.edit_outlined, size: 18, color: AppColors.outline),
                         onTap: () {},
                       ),
                       const Divider(height: 1),
                       ListTile(
-                        leading: const Icon(Icons.language_rounded, color: AppColors.primary),
-                        title: const Text('App Language', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                        leading: Icon(Icons.language_rounded, color: AppColors.primary),
+                        title: Text(
+                          'App Language',
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                        ),
                         subtitle: Text(_selectedLanguage, style: const TextStyle(fontSize: 12)),
                         trailing: PopupMenuButton<String>(
-                          icon: const Icon(Icons.arrow_drop_down_rounded, color: AppColors.outline),
+                          icon: Icon(Icons.arrow_drop_down_rounded, color: AppColors.outline),
                           onSelected: (val) => setState(() => _selectedLanguage = val),
                           itemBuilder: (context) => const [
                             PopupMenuItem(value: 'English', child: Text('English 🇬🇧')),
@@ -155,21 +160,41 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       const Divider(height: 1),
                       ListTile(
-                        leading: const Icon(Icons.dark_mode_outlined, color: AppColors.primary),
-                        title: const Text('Dark Mode', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-                        subtitle: const Text('Switch visual theme', style: TextStyle(fontSize: 12)),
+                        leading: Icon(
+                          isDarkMode ? Icons.dark_mode : Icons.dark_mode_outlined,
+                          color: AppColors.primary,
+                        ),
+                        title: Text(
+                          'Dark Mode',
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                        ),
+                        subtitle: Text(
+                          isDarkMode
+                              ? 'Aetheric Depth theme active'
+                              : 'Switch to Aetheric Depth',
+                          style: const TextStyle(fontSize: 12),
+                        ),
                         trailing: Switch(
-                          value: _isDarkMode,
-                          activeThumbColor: AppColors.primary,
-                          onChanged: (val) => setState(() => _isDarkMode = val),
+                          value: isDarkMode,
+                          onChanged: (val) => context.read<ThemeCubit>().setDarkMode(val),
                         ),
                       ),
                       const Divider(height: 1),
                       ListTile(
-                        leading: const Icon(Icons.shield_outlined, color: AppColors.primary),
-                        title: const Text('Privacy & Terms', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-                        subtitle: const Text('SmartQ Rwanda legal policies', style: TextStyle(fontSize: 12)),
-                        trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: AppColors.outline),
+                        leading: Icon(Icons.shield_outlined, color: AppColors.primary),
+                        title: Text(
+                          'Privacy & Terms',
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                        ),
+                        subtitle: const Text(
+                          'SmartQ Rwanda legal policies',
+                          style: TextStyle(fontSize: 12),
+                        ),
+                        trailing: Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 14,
+                          color: AppColors.outline,
+                        ),
                         onTap: () {},
                       ),
                     ],
@@ -177,8 +202,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               const SizedBox(height: 28),
-
-              // Logout Action Button
               NeumorphicButton(
                 text: 'Log Out of Account',
                 type: NeumorphicButtonType.danger,

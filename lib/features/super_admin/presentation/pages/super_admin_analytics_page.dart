@@ -11,7 +11,7 @@ class SuperAdminAnalyticsPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('National Queue Analytics'),
+        title: Text('National Queue Analytics'),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -20,7 +20,7 @@ class SuperAdminAnalyticsPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Rwanda National Infrastructure',
                 style: TextStyle(
                   fontSize: 18,
@@ -29,7 +29,7 @@ class SuperAdminAnalyticsPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
+              Text(
                 'Real-time queue load monitoring across all provinces',
                 style: TextStyle(fontSize: 13, color: AppColors.outline),
               ),
@@ -43,7 +43,7 @@ class SuperAdminAnalyticsPage extends StatelessWidget {
                 crossAxisSpacing: 14,
                 mainAxisSpacing: 14,
                 childAspectRatio: 1.2,
-                children: const [
+                children: [
                   StatCard(
                     label: 'Total Customers Today',
                     value: '14,820',
@@ -56,13 +56,13 @@ class SuperAdminAnalyticsPage extends StatelessWidget {
                     icon: Icons.meeting_room_outlined,
                     valueColor: AppColors.success,
                   ),
-                  StatCard(
+                  const StatCard(
                     label: 'Avg National Wait',
                     value: '9.8 min',
                     icon: Icons.timer_outlined,
                     valueColor: Colors.deepOrange,
                   ),
-                  StatCard(
+                  const StatCard(
                     label: 'Platform SLA',
                     value: '99.99%',
                     icon: Icons.verified_rounded,
@@ -79,7 +79,7 @@ class SuperAdminAnalyticsPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Queue Distribution by Sector',
                       style: TextStyle(
                         fontSize: 16,

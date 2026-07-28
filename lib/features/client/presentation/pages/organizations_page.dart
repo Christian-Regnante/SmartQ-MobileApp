@@ -34,7 +34,7 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Organizations'),
+        title: Text('Organizations'),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -45,7 +45,7 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
               NeumorphicInput(
                 controller: _searchController,
                 hintText: 'Search by organization or city...',
-                prefixIcon: const Icon(Icons.search_rounded, color: AppColors.outline),
+                prefixIcon: Icon(Icons.search_rounded, color: AppColors.outline),
                 onChanged: (query) {
                   context.read<OrganizationCubit>().loadOrganizations(searchQuery: query);
                 },
@@ -78,7 +78,7 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
                                         color: AppColors.surfaceContainerLow,
                                         borderRadius: BorderRadius.circular(12),
                                       ),
-                                      child: const Icon(
+                                      child: Icon(
                                         Icons.apartment_rounded,
                                         color: AppColors.primary,
                                         size: 28,
@@ -91,7 +91,7 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
                                         children: [
                                           Text(
                                             org.name,
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w700,
                                               color: AppColors.onSurface,
@@ -100,7 +100,7 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
                                           const SizedBox(height: 2),
                                           Text(
                                             org.location,
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontSize: 13,
                                               color: AppColors.outline,
                                             ),
@@ -113,7 +113,7 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
                                 const SizedBox(height: 12),
                                 Text(
                                   org.description ?? 'No description provided.',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 13,
                                     color: AppColors.onSurfaceVariant,
                                   ),
@@ -132,7 +132,7 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
                                       ),
                                       child: Text(
                                         '${org.serviceCount} Services Available',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w600,
                                           color: AppColors.primary,

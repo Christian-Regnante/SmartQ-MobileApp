@@ -104,7 +104,7 @@ class _StaffDashboardPageState extends State<StaffDashboardPage> {
                     ),
                   );
             },
-            child: const Text('Cancel Ticket', style: TextStyle(color: AppColors.error)),
+            child: Text('Cancel Ticket', style: TextStyle(color: AppColors.error)),
           ),
         ],
       ),
@@ -134,7 +134,7 @@ class _StaffDashboardPageState extends State<StaffDashboardPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Staff Service Desk'),
+        title: Text('Staff Service Desk'),
         centerTitle: true,
         actions: [
           Switch(
@@ -178,7 +178,7 @@ class _StaffDashboardPageState extends State<StaffDashboardPage> {
                           children: [
                             Text(
                               'Welcome, $staffName',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
                                 color: AppColors.onSurface,
@@ -186,7 +186,7 @@ class _StaffDashboardPageState extends State<StaffDashboardPage> {
                             ),
                             Text(
                               'Assigned Desks: ${assignedServiceIds.length} active service(s)',
-                              style: const TextStyle(fontSize: 12, color: AppColors.outline),
+                              style: TextStyle(fontSize: 12, color: AppColors.outline),
                             ),
                           ],
                         ),
@@ -211,7 +211,7 @@ class _StaffDashboardPageState extends State<StaffDashboardPage> {
                   const SizedBox(height: 16),
 
                   if (assignedServiceIds.length > 1) ...[
-                    const Text(
+                    Text(
                       'Select Active Service Desk:',
                       style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.outline),
                     ),
@@ -251,7 +251,7 @@ class _StaffDashboardPageState extends State<StaffDashboardPage> {
                     padding: const EdgeInsets.all(24),
                     child: Column(
                       children: [
-                        const Text(
+                        Text(
                           'CURRENTLY SERVING',
                           style: TextStyle(
                             fontSize: 12,
@@ -274,7 +274,7 @@ class _StaffDashboardPageState extends State<StaffDashboardPage> {
                         if (servingTicket != null) ...[
                           Text(
                             servingTicket.organizationName ?? 'Organization',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
                               color: AppColors.onSurface,
@@ -282,7 +282,7 @@ class _StaffDashboardPageState extends State<StaffDashboardPage> {
                           ),
                           Text(
                             servingTicket.serviceName ?? 'Service Desk',
-                            style: const TextStyle(fontSize: 13, color: AppColors.outline),
+                            style: TextStyle(fontSize: 13, color: AppColors.outline),
                           ),
                           const SizedBox(height: 8),
                           Container(
@@ -291,7 +291,7 @@ class _StaffDashboardPageState extends State<StaffDashboardPage> {
                               color: AppColors.primaryContainer.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Text(
+                            child: Text(
                               'Status: Being Served',
                               style: TextStyle(
                                 fontSize: 12,
@@ -327,21 +327,21 @@ class _StaffDashboardPageState extends State<StaffDashboardPage> {
                                 child: OutlinedButton.icon(
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor: AppColors.error,
-                                    side: const BorderSide(color: AppColors.error),
+                                    side: BorderSide(color: AppColors.error),
                                     padding: const EdgeInsets.symmetric(vertical: 12),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                   ),
                                   icon: const Icon(Icons.cancel_outlined),
-                                  label: const Text('Cancel'),
+                                  label: Text('Cancel'),
                                   onPressed: () => _onCancelServingTicket(servingTicket.id),
                                 ),
                               ),
                             ],
                           ),
                         ] else ...[
-                          const Text(
+                          Text(
                             'No customer currently being served',
                             style: TextStyle(
                               fontSize: 13,
@@ -394,7 +394,7 @@ class _StaffDashboardPageState extends State<StaffDashboardPage> {
                     children: [
                       Text(
                         'Waiting in Queue (${waitingQueue.length})',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: AppColors.onSurface,
@@ -465,7 +465,7 @@ class _StaffDashboardPageState extends State<StaffDashboardPage> {
                                 backgroundColor: AppColors.primaryContainer.withValues(alpha: 0.2),
                                 child: Text(
                                   '${index + 1}',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w800,
                                     color: AppColors.primary,
@@ -478,7 +478,7 @@ class _StaffDashboardPageState extends State<StaffDashboardPage> {
                                 children: [
                                   Text(
                                     ticket.ticketNumber,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w800,
                                       color: AppColors.onSurface,
@@ -486,14 +486,14 @@ class _StaffDashboardPageState extends State<StaffDashboardPage> {
                                   ),
                                   Text(
                                     ticket.serviceName ?? 'Service Desk',
-                                    style: const TextStyle(fontSize: 12, color: AppColors.outline),
+                                    style: TextStyle(fontSize: 12, color: AppColors.outline),
                                   ),
                                 ],
                               ),
                               const Spacer(),
                               Text(
                                 '${ticket.estimatedWaitMinutes}m wait',
-                                style: const TextStyle(fontSize: 12, color: AppColors.outline),
+                                style: TextStyle(fontSize: 12, color: AppColors.outline),
                               ),
                               const SizedBox(width: 12),
                               ElevatedButton(

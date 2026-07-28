@@ -77,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: Theme.of(context).textTheme.displayLarge,
                     ),
                     const SizedBox(height: 8),
-                    const Text(
+                    Text(
                       'Sign in to continue to SmartQ-Rwanda',
                       style: TextStyle(
                         fontSize: 15,
@@ -95,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                             labelText: 'Email',
                             hintText: 'Enter your email address',
                             keyboardType: TextInputType.emailAddress,
-                            prefixIcon: const Icon(Icons.email_outlined, color: AppColors.outline),
+                            prefixIcon: Icon(Icons.email_outlined, color: AppColors.outline),
                             validator: (val) {
                               if (val == null || val.isEmpty) return 'Email is required';
                               if (!val.contains('@')) return 'Enter a valid email address';
@@ -108,7 +108,7 @@ class _LoginPageState extends State<LoginPage> {
                             labelText: 'Password',
                             hintText: 'Enter your password',
                             obscureText: _obscurePassword,
-                            prefixIcon: const Icon(Icons.lock_outline, color: AppColors.outline),
+                            prefixIcon: Icon(Icons.lock_outline, color: AppColors.outline),
                             suffixIcon: IconButton(
                               icon: Icon(
                                 _obscurePassword
@@ -131,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                             alignment: Alignment.centerRight,
                             child: TextButton(
                               onPressed: () => context.push(RouteConstants.forgotPassword),
-                              child: const Text(
+                              child: Text(
                                 'Forgot Password?',
                                 style: TextStyle(
                                   color: AppColors.primary,
@@ -150,11 +150,11 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    const Row(
+                    Row(
                       children: [
                         Expanded(child: Divider(color: AppColors.outlineVariant)),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: Text(
                             'OR',
                             style: TextStyle(
@@ -180,13 +180,13 @@ class _LoginPageState extends State<LoginPage> {
                         alignment: WrapAlignment.center,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          const Text(
+                          Text(
                             "Don't have an account? ",
                             style: TextStyle(color: AppColors.onSurfaceVariant),
                           ),
                           GestureDetector(
                             onTap: () => context.push(RouteConstants.register),
-                            child: const Text(
+                            child: Text(
                               'Create Account',
                               style: TextStyle(
                                 color: AppColors.primary,

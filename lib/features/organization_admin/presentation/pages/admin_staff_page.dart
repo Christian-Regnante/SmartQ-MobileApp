@@ -193,7 +193,7 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
                         ),
                       const SizedBox(height: 12),
                       SwitchListTile(
-                        title: const Text('Account Status'),
+                        title: Text('Account Status'),
                         subtitle: Text(isActive ? 'Active' : 'Disabled'),
                         value: isActive,
                         activeThumbColor: AppColors.primary,
@@ -234,7 +234,7 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Staff Member'),
+        title: Text('Delete Staff Member'),
         content: Text('Are you sure you want to delete ${staff.fullName}? This action will remove the staff profile from Firestore.'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
@@ -334,11 +334,11 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
                           Container(
                             width: 44,
                             height: 44,
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               color: AppColors.surfaceContainerLow,
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.person_outline_rounded, color: AppColors.primary),
+                            child: Icon(Icons.person_outline_rounded, color: AppColors.primary),
                           ),
                           const SizedBox(width: 14),
                           Expanded(
@@ -347,7 +347,7 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
                               children: [
                                 Text(
                                   staff.fullName,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w700,
                                     color: AppColors.onSurface,
@@ -355,12 +355,12 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
                                 ),
                                 Text(
                                   staff.email,
-                                  style: const TextStyle(fontSize: 12, color: AppColors.outline),
+                                  style: TextStyle(fontSize: 12, color: AppColors.outline),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   'Assigned Desk: $assignedDeskName',
-                                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.primary),
+                                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.primary),
                                 ),
                               ],
                             ),
@@ -368,11 +368,11 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
                           Row(
                             children: [
                               IconButton(
-                                icon: const Icon(Icons.edit_outlined, color: AppColors.primary, size: 20),
+                                icon: Icon(Icons.edit_outlined, color: AppColors.primary, size: 20),
                                 onPressed: () => _showEditStaffDialog(orgId, staff, state.services),
                               ),
                               IconButton(
-                                icon: const Icon(Icons.delete_outline_rounded, color: AppColors.error, size: 20),
+                                icon: Icon(Icons.delete_outline_rounded, color: AppColors.error, size: 20),
                                 onPressed: () => _confirmDeleteStaff(orgId, staff),
                               ),
                             ],

@@ -21,7 +21,7 @@ class NeumorphicButton extends StatefulWidget {
     this.isLoading = false,
     this.icon,
     this.type = NeumorphicButtonType.primary,
-    this.borderRadius = 16.0,
+    this.borderRadius = 8.0,
     this.height = 52.0,
     this.width,
   });
@@ -37,7 +37,7 @@ class _NeumorphicButtonState extends State<NeumorphicButton> {
     if (widget.onPressed == null) return AppColors.surfaceContainerHigh;
     switch (widget.type) {
       case NeumorphicButtonType.primary:
-        return AppColors.primary;
+        return AppColors.isDark ? AppColors.accent : AppColors.primary;
       case NeumorphicButtonType.secondary:
         return AppColors.surfaceContainerLow;
       case NeumorphicButtonType.danger:
@@ -51,17 +51,19 @@ class _NeumorphicButtonState extends State<NeumorphicButton> {
     if (widget.onPressed == null) return AppColors.outline;
     switch (widget.type) {
       case NeumorphicButtonType.primary:
+        return AppColors.isDark ? Colors.white : AppColors.onPrimary;
       case NeumorphicButtonType.danger:
-        return Colors.white;
+        return AppColors.onError;
       case NeumorphicButtonType.secondary:
         return AppColors.onSurface;
       case NeumorphicButtonType.outline:
-        return AppColors.primary;
+        return AppColors.isDark ? AppColors.accent : AppColors.primary;
     }
   }
 
   List<BoxShadow> _getShadows() {
-    if (_isPressed || widget.onPressed == null) return [];
+    if (widget.onPressed == null) return const [];
+    if (_isPressed) return AppShadows.inset;
     switch (widget.type) {
       case NeumorphicButtonType.primary:
         return AppShadows.primaryButtonElevated;
@@ -88,7 +90,7 @@ class _NeumorphicButtonState extends State<NeumorphicButton> {
           ? () => setState(() => _isPressed = false)
           : null,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 100),
+        duration: const Duration(milliseconds: 120),
         width: widget.width ?? double.infinity,
         height: widget.height,
         alignment: Alignment.center,
@@ -97,7 +99,12 @@ class _NeumorphicButtonState extends State<NeumorphicButton> {
           borderRadius: BorderRadius.circular(widget.borderRadius),
           boxShadow: _getShadows(),
           border: widget.type == NeumorphicButtonType.outline
-              ? Border.all(color: AppColors.outlineVariant, width: 1.5)
+              ? Border.all(
+                  color: AppColors.isDark
+                      ? AppColors.accent.withValues(alpha: 0.5)
+                      : AppColors.outlineVariant,
+                  width: 1.5,
+                )
               : null,
         ),
         child: widget.isLoading

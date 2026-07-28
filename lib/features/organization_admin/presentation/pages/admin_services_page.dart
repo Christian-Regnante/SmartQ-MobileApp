@@ -188,7 +188,7 @@ class _AdminServicesPageState extends State<AdminServicesPage> {
                       ),
                       const SizedBox(height: 12),
                       SwitchListTile(
-                        title: const Text('Desk Status'),
+                        title: Text('Desk Status'),
                         subtitle: Text(isActive ? 'Active' : 'Inactive / Closed'),
                         value: isActive,
                         activeThumbColor: AppColors.primary,
@@ -233,7 +233,7 @@ class _AdminServicesPageState extends State<AdminServicesPage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Service Desk'),
+        title: Text('Delete Service Desk'),
         content: Text('Are you sure you want to permanently delete "$serviceName" from Firestore? Staff assignments will be cleaned up.'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
@@ -316,7 +316,7 @@ class _AdminServicesPageState extends State<AdminServicesPage> {
                               Expanded(
                                 child: Text(
                                   service.name,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
                                     color: AppColors.onSurface,
@@ -326,11 +326,11 @@ class _AdminServicesPageState extends State<AdminServicesPage> {
                               Row(
                                 children: [
                                   IconButton(
-                                    icon: const Icon(Icons.edit_outlined, color: AppColors.primary, size: 20),
+                                    icon: Icon(Icons.edit_outlined, color: AppColors.primary, size: 20),
                                     onPressed: () => _showEditServiceDialog(orgId, service),
                                   ),
                                   IconButton(
-                                    icon: const Icon(Icons.delete_outline_rounded, color: AppColors.error, size: 20),
+                                    icon: Icon(Icons.delete_outline_rounded, color: AppColors.error, size: 20),
                                     onPressed: () => _confirmDeleteService(orgId, service.id, service.name),
                                   ),
                                   Switch(
@@ -351,7 +351,7 @@ class _AdminServicesPageState extends State<AdminServicesPage> {
                           ),
                           Text(
                             service.description ?? 'No description provided.',
-                            style: const TextStyle(fontSize: 13, color: AppColors.onSurfaceVariant),
+                            style: TextStyle(fontSize: 13, color: AppColors.onSurfaceVariant),
                           ),
                           const SizedBox(height: 12),
                           Row(
@@ -359,11 +359,11 @@ class _AdminServicesPageState extends State<AdminServicesPage> {
                             children: [
                               Text(
                                 'Counter: $counterName',
-                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.outline),
+                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.outline),
                               ),
                               Text(
                                 'Avg. Wait: ${service.averageServiceTimeMinutes} mins • ${service.currentQueueCount} Waiting',
-                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.primary),
+                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.primary),
                               ),
                             ],
                           ),
