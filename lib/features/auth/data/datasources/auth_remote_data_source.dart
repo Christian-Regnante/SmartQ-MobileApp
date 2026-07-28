@@ -47,21 +47,49 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final user = credential.user;
       if (user == null) throw const AuthException('User credentials not found');
 
-      final profile = await getUserProfile(user.uid);
-      if (profile != null) return profile;
+      final cleanEmail = (user.email ?? email).trim().toLowerCase();
+      final isSuperAdminEmail = cleanEmail == 'christianregnantee@gmail.com';
+
+      var profile = await getUserProfile(user.uid);
+
+      if (profile != null) {
+        if (isSuperAdminEmail && profile.role != UserRole.superAdmin) {
+          profile = UserModel(
+            id: profile.id,
+            email: profile.email,
+            fullName: profile.fullName.isNotEmpty ? profile.fullName : 'Super Admin',
+            phoneNumber: profile.phoneNumber,
+            role: UserRole.superAdmin,
+            organizationId: profile.organizationId,
+            serviceId: profile.serviceId,
+            serviceIds: profile.serviceIds,
+            photoUrl: profile.photoUrl,
+            isActive: profile.isActive,
+            createdAt: profile.createdAt,
+          );
+          await _firestore
+              .collection(FirebaseConstants.usersCollection)
+              .doc(user.uid)
+              .set(profile.toFirestore(), SetOptions(merge: true));
+        }
+        return profile;
+      }
 
       // Fallback if profile document missing
+      final role = isSuperAdminEmail ? UserRole.superAdmin : UserRole.client;
       final newModel = UserModel(
         id: user.uid,
         email: user.email ?? email,
-        fullName: user.displayName ?? 'Client User',
-        role: UserRole.client,
+        fullName: role == UserRole.superAdmin ? 'Super Admin' : (user.displayName ?? 'Client User'),
+        role: role,
         createdAt: DateTime.now(),
       );
+
       await _firestore
           .collection(FirebaseConstants.usersCollection)
           .doc(user.uid)
-          .set(newModel.toFirestore());
+          .set(newModel.toFirestore(), SetOptions(merge: true));
+
       return newModel;
     } on FirebaseAuthException catch (e) {
       throw AuthException(e.message ?? 'Login failed');
@@ -85,19 +113,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final user = credential.user;
       if (user == null) throw const AuthException('Registration failed');
 
+      final cleanEmail = email.trim().toLowerCase();
+      final role = cleanEmail == 'christianregnantee@gmail.com' ? UserRole.superAdmin : UserRole.client;
+
       final userModel = UserModel(
         id: user.uid,
         email: email,
         fullName: fullName,
         phoneNumber: phoneNumber,
-        role: UserRole.client,
+        role: role,
         createdAt: DateTime.now(),
       );
 
       await _firestore
           .collection(FirebaseConstants.usersCollection)
           .doc(user.uid)
-          .set(userModel.toFirestore());
+          .set(userModel.toFirestore(), SetOptions(merge: true));
 
       return userModel;
     } on FirebaseAuthException catch (e) {
@@ -123,22 +154,48 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final user = userCredential.user;
       if (user == null) throw const AuthException('Google Auth failed');
 
-      final existingProfile = await getUserProfile(user.uid);
-      if (existingProfile != null) return existingProfile;
+      final cleanEmail = (user.email ?? '').trim().toLowerCase();
+      final isSuperAdminEmail = cleanEmail == 'christianregnantee@gmail.com';
 
+      final existingProfile = await getUserProfile(user.uid);
+      if (existingProfile != null) {
+        if (isSuperAdminEmail && existingProfile.role != UserRole.superAdmin) {
+          final updated = UserModel(
+            id: existingProfile.id,
+            email: existingProfile.email,
+            fullName: existingProfile.fullName,
+            phoneNumber: existingProfile.phoneNumber,
+            role: UserRole.superAdmin,
+            organizationId: existingProfile.organizationId,
+            serviceId: existingProfile.serviceId,
+            serviceIds: existingProfile.serviceIds,
+            photoUrl: existingProfile.photoUrl,
+            isActive: existingProfile.isActive,
+            createdAt: existingProfile.createdAt,
+          );
+          await _firestore
+              .collection(FirebaseConstants.usersCollection)
+              .doc(user.uid)
+              .set(updated.toFirestore(), SetOptions(merge: true));
+          return updated;
+        }
+        return existingProfile;
+      }
+
+      final role = isSuperAdminEmail ? UserRole.superAdmin : UserRole.client;
       final newModel = UserModel(
         id: user.uid,
         email: user.email ?? '',
-        fullName: user.displayName ?? googleUser.displayName ?? 'User',
+        fullName: user.displayName ?? googleUser.displayName ?? (isSuperAdminEmail ? 'Super Admin' : 'User'),
         photoUrl: user.photoURL,
-        role: UserRole.client,
+        role: role,
         createdAt: DateTime.now(),
       );
 
       await _firestore
           .collection(FirebaseConstants.usersCollection)
           .doc(user.uid)
-          .set(newModel.toFirestore());
+          .set(newModel.toFirestore(), SetOptions(merge: true));
 
       return newModel;
     } on FirebaseAuthException catch (e) {
@@ -177,8 +234,24 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           .collection(FirebaseConstants.usersCollection)
           .doc(uid)
           .get();
-      if (!doc.exists) return null;
-      return UserModel.fromFirestore(doc);
+      if (doc.exists) {
+        return UserModel.fromFirestore(doc);
+      }
+
+      // Fallback: search by current Firebase Auth email if doc by uid missing
+      final currentUser = _firebaseAuth.currentUser;
+      if (currentUser != null && currentUser.email != null && currentUser.email!.isNotEmpty) {
+        final snap = await _firestore
+            .collection(FirebaseConstants.usersCollection)
+            .where('email', isEqualTo: currentUser.email)
+            .get();
+
+        if (snap.docs.isNotEmpty) {
+          return UserModel.fromFirestore(snap.docs.first);
+        }
+      }
+
+      return null;
     } catch (e) {
       return null;
     }
