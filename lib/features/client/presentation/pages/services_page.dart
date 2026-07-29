@@ -56,7 +56,7 @@ class _ServicesPageState extends State<ServicesPage> {
                         children: [
                           Text(
                             service.name,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
                               color: AppColors.onSurface,
@@ -65,7 +65,7 @@ class _ServicesPageState extends State<ServicesPage> {
                           const SizedBox(height: 6),
                           Text(
                             service.description ?? 'No service description.',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 13,
                               color: AppColors.onSurfaceVariant,
                             ),
@@ -73,22 +73,22 @@ class _ServicesPageState extends State<ServicesPage> {
                           const SizedBox(height: 16),
                           Row(
                             children: [
-                              const Icon(Icons.timer_outlined, size: 16, color: AppColors.outline),
+                              Icon(Icons.timer_outlined, size: 16, color: AppColors.outline),
                               const SizedBox(width: 6),
                               Text(
                                 'Avg. service time: ${service.averageServiceTimeMinutes} min',
-                                style: const TextStyle(fontSize: 13, color: AppColors.onSurfaceVariant),
+                                style: TextStyle(fontSize: 13, color: AppColors.onSurfaceVariant),
                               ),
                             ],
                           ),
                           const SizedBox(height: 6),
                           Row(
                             children: [
-                              const Icon(Icons.people_outline_rounded, size: 16, color: AppColors.outline),
+                              Icon(Icons.people_outline_rounded, size: 16, color: AppColors.outline),
                               const SizedBox(width: 6),
                               Text(
                                 'Current queue: ${service.currentQueueCount} people',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                   color: AppColors.primary,

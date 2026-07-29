@@ -73,7 +73,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 alignment: Alignment.topRight,
                 child: TextButton(
                   onPressed: _completeOnboarding,
-                  child: const Text(
+                  child: Text(
                     'Skip',
                     style: TextStyle(
                       color: AppColors.outline,
@@ -100,7 +100,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             Container(
                               width: 88,
                               height: 88,
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                 color: AppColors.surfaceContainerLow,
                                 shape: BoxShape.circle,
                               ),
@@ -114,7 +114,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             Text(
                               slide['title']!,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w700,
                                 color: AppColors.onSurface,
@@ -124,7 +124,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             Text(
                               slide['description']!,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 15,
                                 height: 1.5,
                                 color: AppColors.onSurfaceVariant,

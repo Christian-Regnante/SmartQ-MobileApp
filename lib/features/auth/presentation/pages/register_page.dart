@@ -83,7 +83,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       style: Theme.of(context).textTheme.displayLarge,
                     ),
                     const SizedBox(height: 8),
-                    const Text(
+                    Text(
                       'Join SmartQ-Rwanda to skip waiting lines',
                       style: TextStyle(
                         fontSize: 15,
@@ -100,7 +100,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             controller: _nameController,
                             labelText: 'Full Name',
                             hintText: 'e.g. Christian Regnante',
-                            prefixIcon: const Icon(Icons.person_outline, color: AppColors.outline),
+                            prefixIcon: Icon(Icons.person_outline, color: AppColors.outline),
                             validator: (val) =>
                                 val == null || val.isEmpty ? 'Full Name is required' : null,
                           ),
@@ -110,7 +110,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             labelText: 'Email Address',
                             hintText: 'name@example.com',
                             keyboardType: TextInputType.emailAddress,
-                            prefixIcon: const Icon(Icons.email_outlined, color: AppColors.outline),
+                            prefixIcon: Icon(Icons.email_outlined, color: AppColors.outline),
                             validator: (val) {
                               if (val == null || val.isEmpty) return 'Email is required';
                               if (!val.contains('@')) return 'Enter a valid email';
@@ -123,7 +123,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             labelText: 'Phone Number (Optional)',
                             hintText: '+250 7XX XXX XXX',
                             keyboardType: TextInputType.phone,
-                            prefixIcon: const Icon(Icons.phone_outlined, color: AppColors.outline),
+                            prefixIcon: Icon(Icons.phone_outlined, color: AppColors.outline),
                           ),
                           const SizedBox(height: 16),
                           NeumorphicInput(
@@ -131,7 +131,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             labelText: 'Password',
                             hintText: 'At least 6 characters',
                             obscureText: _obscurePassword,
-                            prefixIcon: const Icon(Icons.lock_outline, color: AppColors.outline),
+                            prefixIcon: Icon(Icons.lock_outline, color: AppColors.outline),
                             suffixIcon: IconButton(
                               icon: Icon(
                                 _obscurePassword

@@ -173,7 +173,7 @@ class _SuperAdminAdminsPageState extends State<SuperAdminAdminsPage> {
                         ),
                       const SizedBox(height: 12),
                       SwitchListTile(
-                        title: const Text('Account Status'),
+                        title: Text('Account Status'),
                         subtitle: Text(isActive ? 'Active' : 'Disabled'),
                         value: isActive,
                         activeThumbColor: AppColors.primary,
@@ -213,7 +213,7 @@ class _SuperAdminAdminsPageState extends State<SuperAdminAdminsPage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Org Administrator'),
+        title: Text('Delete Org Administrator'),
         content: Text('Are you sure you want to delete ${admin.fullName}? This will remove the admin user and unassign their organization.'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
@@ -301,11 +301,11 @@ class _SuperAdminAdminsPageState extends State<SuperAdminAdminsPage> {
                           Container(
                             width: 44,
                             height: 44,
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               color: AppColors.surfaceContainerLow,
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.security_rounded, color: AppColors.primary),
+                            child: Icon(Icons.security_rounded, color: AppColors.primary),
                           ),
                           const SizedBox(width: 14),
                           Expanded(
@@ -314,7 +314,7 @@ class _SuperAdminAdminsPageState extends State<SuperAdminAdminsPage> {
                               children: [
                                 Text(
                                   admin.fullName,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w700,
                                     color: AppColors.onSurface,
@@ -322,12 +322,12 @@ class _SuperAdminAdminsPageState extends State<SuperAdminAdminsPage> {
                                 ),
                                 Text(
                                   admin.email,
-                                  style: const TextStyle(fontSize: 12, color: AppColors.outline),
+                                  style: TextStyle(fontSize: 12, color: AppColors.outline),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   'Org: ${matchingOrg.name}',
-                                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.primary),
+                                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.primary),
                                 ),
                               ],
                             ),
@@ -335,11 +335,11 @@ class _SuperAdminAdminsPageState extends State<SuperAdminAdminsPage> {
                           Row(
                             children: [
                               IconButton(
-                                icon: const Icon(Icons.edit_outlined, color: AppColors.primary, size: 20),
+                                icon: Icon(Icons.edit_outlined, color: AppColors.primary, size: 20),
                                 onPressed: () => _showEditAdminDialog(admin, state.organizations),
                               ),
                               IconButton(
-                                icon: const Icon(Icons.delete_outline_rounded, color: AppColors.error, size: 20),
+                                icon: Icon(Icons.delete_outline_rounded, color: AppColors.error, size: 20),
                                 onPressed: () => _confirmDeleteAdmin(admin),
                               ),
                             ],

@@ -62,14 +62,14 @@ class _ClientHomePageState extends State<ClientHomePage> {
                     children: [
                       Text(
                         'Good morning, $userName 👋',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                           color: AppColors.onSurface,
                         ),
                       ),
                       const SizedBox(height: 2),
-                      const Text(
+                      Text(
                         'Queue Less. Live More.',
                         style: TextStyle(
                           fontSize: 13,
@@ -81,11 +81,11 @@ class _ClientHomePageState extends State<ClientHomePage> {
                   Container(
                     width: 44,
                     height: 44,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: AppColors.surfaceContainerLow,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.person, color: AppColors.primary),
+                    child: Icon(Icons.person, color: AppColors.primary),
                   ),
                 ],
               ),
@@ -108,7 +108,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
+                                Text(
                                   'Your Active Ticket',
                                   style: TextStyle(
                                     fontSize: 14,
@@ -124,7 +124,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
                                   ),
                                   child: Text(
                                     ticket.status.toDisplayString().toUpperCase(),
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 11,
                                       fontWeight: FontWeight.w700,
                                       color: AppColors.primary,
@@ -136,7 +136,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
                             const SizedBox(height: 16),
                             Text(
                               ticket.organizationName ?? 'Organization',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
                                 color: AppColors.onSurface,
@@ -144,7 +144,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
                             ),
                             Text(
                               ticket.serviceName ?? 'Service',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 14,
                                 color: AppColors.onSurfaceVariant,
                               ),
@@ -153,7 +153,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
                             Center(
                               child: Text(
                                 ticket.ticketNumber,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 44,
                                   fontWeight: FontWeight.w800,
                                   color: AppColors.primary,
@@ -169,13 +169,13 @@ class _ClientHomePageState extends State<ClientHomePage> {
                                   children: [
                                     Text(
                                       '${ticket.position} people ahead',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w600,
                                         color: AppColors.onSurface,
                                       ),
                                     ),
-                                    const Text(
+                                    Text(
                                       'Position',
                                       style: TextStyle(fontSize: 11, color: AppColors.outline),
                                     ),
@@ -185,13 +185,13 @@ class _ClientHomePageState extends State<ClientHomePage> {
                                   children: [
                                     Text(
                                       '~${ticket.estimatedWaitMinutes} min',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w600,
                                         color: AppColors.onSurface,
                                       ),
                                     ),
-                                    const Text(
+                                    Text(
                                       'Estimated wait',
                                       style: TextStyle(fontSize: 11, color: AppColors.outline),
                                     ),
@@ -230,7 +230,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
               ),
 
               // Search CTA
-              const Text(
+              Text(
                 'Find a Service',
                 style: TextStyle(
                   fontSize: 18,
@@ -242,7 +242,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
               NeumorphicInput(
                 controller: _searchController,
                 hintText: 'Search organization (e.g. Hospital, Bank)',
-                prefixIcon: const Icon(Icons.search_rounded, color: AppColors.outline),
+                prefixIcon: Icon(Icons.search_rounded, color: AppColors.outline),
                 onChanged: (query) {
                   context.read<OrganizationCubit>().loadOrganizations(searchQuery: query);
                 },
@@ -253,7 +253,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'Nearby Organizations',
                     style: TextStyle(
                       fontSize: 18,
@@ -296,7 +296,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
                                   color: AppColors.surfaceContainerLow,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: const Icon(
+                                child: Icon(
                                   Icons.local_hospital_rounded,
                                   color: AppColors.primary,
                                 ),
@@ -308,7 +308,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
                                   children: [
                                     Text(
                                       org.name,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w700,
                                         color: AppColors.onSurface,
@@ -317,7 +317,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
                                     const SizedBox(height: 2),
                                     Text(
                                       org.location,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 13,
                                         color: AppColors.outline,
                                       ),
@@ -325,7 +325,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
                                     const SizedBox(height: 6),
                                     Text(
                                       '${org.serviceCount} Services Available',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
                                         color: AppColors.primary,
@@ -334,7 +334,7 @@ class _ClientHomePageState extends State<ClientHomePage> {
                                   ],
                                 ),
                               ),
-                              const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: AppColors.outline),
+                              Icon(Icons.arrow_forward_ios_rounded, size: 16, color: AppColors.outline),
                             ],
                           ),
                         );

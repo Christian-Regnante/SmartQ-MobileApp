@@ -118,14 +118,14 @@ class _NotificationsPageState extends State<NotificationsPage> {
                                 ),
                                 Text(
                                   timeStr,
-                                  style: const TextStyle(fontSize: 11, color: AppColors.outline),
+                                  style: TextStyle(fontSize: 11, color: AppColors.outline),
                                 ),
                               ],
                             ),
                             const SizedBox(height: 4),
                             Text(
                               notif.message,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 13,
                                 color: AppColors.onSurfaceVariant,
                                 height: 1.3,

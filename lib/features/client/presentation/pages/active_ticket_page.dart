@@ -57,15 +57,15 @@ class _ActiveTicketPageState extends State<ActiveTicketPage> {
 
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Ticket successfully cancelled and deleted.'),
+                  SnackBar(
+                    content: const Text('Ticket successfully cancelled and deleted.'),
                     backgroundColor: AppColors.success,
                   ),
                 );
                 context.go(RouteConstants.clientHome);
               }
             },
-            child: const Text('Cancel Ticket', style: TextStyle(color: AppColors.error)),
+            child: Text('Cancel Ticket', style: TextStyle(color: AppColors.error)),
           ),
         ],
       ),
@@ -115,7 +115,7 @@ class _ActiveTicketPageState extends State<ActiveTicketPage> {
                 children: [
                   Text(
                     orgName,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                       color: AppColors.onSurface,
@@ -124,7 +124,7 @@ class _ActiveTicketPageState extends State<ActiveTicketPage> {
                   const SizedBox(height: 4),
                   Text(
                     serviceName,
-                    style: const TextStyle(fontSize: 14, color: AppColors.outline),
+                    style: TextStyle(fontSize: 14, color: AppColors.outline),
                   ),
                   const SizedBox(height: 24),
                   NeumorphicCard(
@@ -134,7 +134,7 @@ class _ActiveTicketPageState extends State<ActiveTicketPage> {
                       children: [
                         Text(
                           ticketNumber,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 52,
                             fontWeight: FontWeight.w800,
                             color: AppColors.primary,
@@ -142,7 +142,7 @@ class _ActiveTicketPageState extends State<ActiveTicketPage> {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        const Text(
+                        Text(
                           'YOUR TICKET',
                           style: TextStyle(
                             fontSize: 12,
@@ -160,7 +160,7 @@ class _ActiveTicketPageState extends State<ActiveTicketPage> {
                           ),
                           child: Text(
                             activeTicket.status.toDisplayString().toUpperCase(),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
                               color: AppColors.primary,
@@ -175,13 +175,13 @@ class _ActiveTicketPageState extends State<ActiveTicketPage> {
                               children: [
                                 Text(
                                   '$peopleAhead',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 26,
                                     fontWeight: FontWeight.w800,
                                     color: AppColors.onSurface,
                                   ),
                                 ),
-                                const Text(
+                                Text(
                                   'People Ahead',
                                   style: TextStyle(fontSize: 12, color: AppColors.outline),
                                 ),
@@ -192,13 +192,13 @@ class _ActiveTicketPageState extends State<ActiveTicketPage> {
                               children: [
                                 Text(
                                   '$waitMinutes min',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 26,
                                     fontWeight: FontWeight.w800,
                                     color: AppColors.primary,
                                   ),
                                 ),
-                                const Text(
+                                Text(
                                   'Estimated Wait',
                                   style: TextStyle(fontSize: 12, color: AppColors.outline),
                                 ),
@@ -218,13 +218,13 @@ class _ActiveTicketPageState extends State<ActiveTicketPage> {
                     padding: const EdgeInsets.all(20),
                     child: Row(
                       children: [
-                        const Icon(Icons.campaign_rounded, color: AppColors.primary, size: 32),
+                        Icon(Icons.campaign_rounded, color: AppColors.primary, size: 32),
                         const SizedBox(width: 16),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              Text(
                                 'Currently Serving',
                                 style: TextStyle(
                                   fontSize: 12,
@@ -235,7 +235,7 @@ class _ActiveTicketPageState extends State<ActiveTicketPage> {
                               const SizedBox(height: 2),
                               Text(
                                 counter,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w800,
                                   color: AppColors.onSurface,

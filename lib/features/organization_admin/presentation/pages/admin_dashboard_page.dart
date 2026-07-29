@@ -140,7 +140,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Organization Control Panel'),
+        title: Text('Organization Control Panel'),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -151,13 +151,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             children: [
               Text(
                 'Welcome, $adminName 👋',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
                   color: AppColors.onSurface,
                 ),
               ),
-              const Text(
+              Text(
                 'Organization Operations & Queue Control',
                 style: TextStyle(fontSize: 13, color: AppColors.outline),
               ),
@@ -176,7 +176,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                         ),
                       ),
                       icon: const Icon(Icons.add_rounded),
-                      label: const Text('Add Service Desk'),
+                      label: Text('Add Service Desk'),
                       onPressed: () => _showAddServiceDialog(orgId),
                     ),
                   ),
@@ -184,7 +184,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               ),
               const SizedBox(height: 24),
 
-              const Text(
+              Text(
                 'Active Service Desks',
                 style: TextStyle(
                   fontSize: 18,
@@ -228,7 +228,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                                   color: AppColors.surfaceContainerLow,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: const Icon(Icons.medical_services_rounded, color: AppColors.primary),
+                                child: Icon(Icons.medical_services_rounded, color: AppColors.primary),
                               ),
                               const SizedBox(width: 14),
                               Expanded(
@@ -237,7 +237,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                                   children: [
                                     Text(
                                       service.name,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w700,
                                         color: AppColors.onSurface,
@@ -245,7 +245,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                                     ),
                                     Text(
                                       '${service.counterNumber} • Avg ${service.averageServiceTimeMinutes}m',
-                                      style: const TextStyle(fontSize: 12, color: AppColors.outline),
+                                      style: TextStyle(fontSize: 12, color: AppColors.outline),
                                     ),
                                   ],
                                 ),
@@ -258,7 +258,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                                 ),
                                 child: Text(
                                   '${service.currentQueueCount} Waiting',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w700,
                                     color: AppColors.primary,

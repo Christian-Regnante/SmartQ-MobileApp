@@ -52,7 +52,7 @@ class _SuperAdminOrganizationsPageState extends State<SuperAdminOrganizationsPag
                             children: [
                               Text(
                                 org.name,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
                                   color: AppColors.onSurface,
@@ -71,12 +71,12 @@ class _SuperAdminOrganizationsPageState extends State<SuperAdminOrganizationsPag
                           const SizedBox(height: 2),
                           Text(
                             org.location,
-                            style: const TextStyle(fontSize: 13, color: AppColors.outline),
+                            style: TextStyle(fontSize: 13, color: AppColors.outline),
                           ),
                           const SizedBox(height: 10),
                           Text(
                             org.description ?? 'No description provided.',
-                            style: const TextStyle(fontSize: 13, color: AppColors.onSurfaceVariant),
+                            style: TextStyle(fontSize: 13, color: AppColors.onSurfaceVariant),
                           ),
                           const SizedBox(height: 12),
                           Row(
@@ -84,11 +84,11 @@ class _SuperAdminOrganizationsPageState extends State<SuperAdminOrganizationsPag
                             children: [
                               Text(
                                 'Email: ${org.email}',
-                                style: const TextStyle(fontSize: 12, color: AppColors.outline),
+                                style: TextStyle(fontSize: 12, color: AppColors.outline),
                               ),
                               Text(
                                 '${org.serviceCount} Services',
-                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.primary),
+                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.primary),
                               ),
                             ],
                           ),

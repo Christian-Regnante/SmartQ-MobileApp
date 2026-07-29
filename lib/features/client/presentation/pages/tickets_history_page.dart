@@ -58,7 +58,7 @@ class _TicketsHistoryPageState extends State<TicketsHistoryPage>
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('My Ticket History'),
+        title: Text('My Ticket History'),
         centerTitle: true,
         bottom: TabBar(
           controller: _tabController,
@@ -141,7 +141,7 @@ class _TicketsHistoryPageState extends State<TicketsHistoryPage>
                 alignment: Alignment.center,
                 child: Text(
                   ticket.ticketNumber,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
                     color: AppColors.primary,
@@ -155,7 +155,7 @@ class _TicketsHistoryPageState extends State<TicketsHistoryPage>
                   children: [
                     Text(
                       ticket.serviceName ?? 'Service',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
                         color: AppColors.onSurface,
@@ -164,7 +164,7 @@ class _TicketsHistoryPageState extends State<TicketsHistoryPage>
                     const SizedBox(height: 2),
                     Text(
                       ticket.organizationName ?? 'Organization',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
                         color: AppColors.outline,
                       ),
@@ -172,7 +172,7 @@ class _TicketsHistoryPageState extends State<TicketsHistoryPage>
                     const SizedBox(height: 4),
                     Text(
                       dateStr,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         color: AppColors.outline,
                       ),
@@ -237,7 +237,7 @@ class _TicketsHistoryPageState extends State<TicketsHistoryPage>
                     alignment: Alignment.center,
                     child: Text(
                       ticket.queueNumber,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
                         color: AppColors.error,
@@ -251,7 +251,7 @@ class _TicketsHistoryPageState extends State<TicketsHistoryPage>
                       children: [
                         Text(
                           ticket.organizationName ?? 'Organization',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
                             color: AppColors.onSurface,
@@ -260,7 +260,7 @@ class _TicketsHistoryPageState extends State<TicketsHistoryPage>
                         const SizedBox(height: 2),
                         Text(
                           ticket.serviceName ?? 'Service Desk',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 13,
                             color: AppColors.outline,
                           ),
@@ -274,7 +274,7 @@ class _TicketsHistoryPageState extends State<TicketsHistoryPage>
                       color: AppColors.error.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Text(
+                    child: Text(
                       'CANCELLED',
                       style: TextStyle(
                         fontSize: 11,
@@ -286,14 +286,14 @@ class _TicketsHistoryPageState extends State<TicketsHistoryPage>
                 ],
               ),
               const SizedBox(height: 12),
-              const Divider(height: 1, color: AppColors.outlineVariant),
+              Divider(height: 1, color: AppColors.outlineVariant),
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     'Cancelled on: $dateStr',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: AppColors.outline,
@@ -302,7 +302,7 @@ class _TicketsHistoryPageState extends State<TicketsHistoryPage>
                   if (ticket.counterNumber != null && ticket.counterNumber!.isNotEmpty)
                     Text(
                       'Desk: ${ticket.counterNumber}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         color: AppColors.outline,
                       ),

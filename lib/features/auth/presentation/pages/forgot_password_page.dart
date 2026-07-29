@@ -32,8 +32,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         await sl<AuthRepository>().sendPasswordResetEmail(_emailController.text.trim());
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Password reset link sent to your email.'),
+            SnackBar(
+              content: const Text('Password reset link sent to your email.'),
               backgroundColor: AppColors.success,
             ),
           );
@@ -77,7 +77,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   style: Theme.of(context).textTheme.displayLarge,
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'Enter your email address to receive a password reset link.',
                   style: TextStyle(
                     fontSize: 15,
@@ -95,7 +95,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         labelText: 'Email Address',
                         hintText: 'name@example.com',
                         keyboardType: TextInputType.emailAddress,
-                        prefixIcon: const Icon(Icons.email_outlined, color: AppColors.outline),
+                        prefixIcon: Icon(Icons.email_outlined, color: AppColors.outline),
                         validator: (val) {
                           if (val == null || val.isEmpty) return 'Email is required';
                           if (!val.contains('@')) return 'Enter a valid email address';

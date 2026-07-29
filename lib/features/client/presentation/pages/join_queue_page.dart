@@ -71,7 +71,7 @@ class _JoinQueuePageState extends State<JoinQueuePage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Join Queue'),
+        title: Text('Join Queue'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () => context.pop(),
@@ -82,8 +82,8 @@ class _JoinQueuePageState extends State<JoinQueuePage> {
           listener: (context, state) {
             if (state is TicketActiveState && state.activeTicket != null) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Ticket created successfully!'),
+                SnackBar(
+                  content: const Text('Ticket created successfully!'),
                   backgroundColor: AppColors.success,
                 ),
               );
@@ -111,7 +111,7 @@ class _JoinQueuePageState extends State<JoinQueuePage> {
                     style: Theme.of(context).textTheme.displayLarge,
                   ),
                   const SizedBox(height: 6),
-                  const Text(
+                  Text(
                     'Confirm details to join digital queue',
                     style: TextStyle(fontSize: 14, color: AppColors.outline),
                   ),
@@ -124,21 +124,21 @@ class _JoinQueuePageState extends State<JoinQueuePage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text('Current Queue', style: TextStyle(color: AppColors.outline)),
+                            Text('Current Queue', style: TextStyle(color: AppColors.outline)),
                             Text(
                               '$currentQueue people',
                               style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
                             ),
                           ],
                         ),
-                        const Divider(height: 24, color: AppColors.outlineVariant),
+                        Divider(height: 24, color: AppColors.outlineVariant),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text('Estimated Wait', style: TextStyle(color: AppColors.outline)),
+                            Text('Estimated Wait', style: TextStyle(color: AppColors.outline)),
                             Text(
                               '~$estimatedWait minutes',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 16,
                                 color: AppColors.primary,
@@ -152,10 +152,10 @@ class _JoinQueuePageState extends State<JoinQueuePage> {
                           labelText: 'Contact Phone Number',
                           hintText: '+250 7XX XXX XXX',
                           keyboardType: TextInputType.phone,
-                          prefixIcon: const Icon(Icons.phone_outlined, color: AppColors.outline),
+                          prefixIcon: Icon(Icons.phone_outlined, color: AppColors.outline),
                         ),
                         const SizedBox(height: 20),
-                        const Text(
+                        Text(
                           'By joining this queue, you agree to receive SMS/In-App notifications when your turn is approaching.',
                           style: TextStyle(fontSize: 12, color: AppColors.outline, height: 1.4),
                         ),

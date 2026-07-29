@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_shadows.dart';
 
-/// Elevated Neumorphic Card container (16px default border radius)
+/// Elevated Neumorphic Card (extruded dual-shadow, no border).
 class NeumorphicCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
   final double borderRadius;
-  final Color backgroundColor;
+  final Color? backgroundColor;
   final List<BoxShadow>? shadows;
   final VoidCallback? onTap;
   final double? width;
@@ -20,7 +20,7 @@ class NeumorphicCard extends StatelessWidget {
     this.padding = const EdgeInsets.all(20),
     this.margin,
     this.borderRadius = 16.0,
-    this.backgroundColor = AppColors.surface,
+    this.backgroundColor,
     this.shadows,
     this.onTap,
     this.width,
@@ -36,7 +36,7 @@ class NeumorphicCard extends StatelessWidget {
       padding: padding,
       margin: margin,
       decoration: BoxDecoration(
-        color: backgroundColor,
+        color: backgroundColor ?? AppColors.surface,
         borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: shadows ?? AppShadows.elevated,
       ),
