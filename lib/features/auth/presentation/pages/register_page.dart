@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/phone_validators.dart';
 import '../../../../core/widgets/neumorphic_button.dart';
 import '../../../../core/widgets/neumorphic_card.dart';
 import '../../../../core/widgets/neumorphic_input.dart';
@@ -39,7 +40,7 @@ class _RegisterPageState extends State<RegisterPage> {
             AuthRegisterRequested(
               fullName: _nameController.text.trim(),
               email: _emailController.text.trim(),
-              phoneNumber: _phoneController.text.trim().isEmpty ? null : _phoneController.text.trim(),
+              phoneNumber: _phoneController.text.replaceAll(RegExp(r'[\s\-\(\)]'), ''),
               password: _passwordController.text.trim(),
             ),
           );
@@ -120,10 +121,11 @@ class _RegisterPageState extends State<RegisterPage> {
                           const SizedBox(height: 16),
                           NeumorphicInput(
                             controller: _phoneController,
-                            labelText: 'Phone Number (Optional)',
+                            labelText: 'Phone Number',
                             hintText: '+250 7XX XXX XXX',
                             keyboardType: TextInputType.phone,
                             prefixIcon: Icon(Icons.phone_outlined, color: AppColors.outline),
+                            validator: PhoneValidators.rwandaMobile,
                           ),
                           const SizedBox(height: 16),
                           NeumorphicInput(
