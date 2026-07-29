@@ -61,6 +61,17 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<UserEntity> updatePhoneNumber(String phoneNumber) async {
+    try {
+      return await remoteDataSource.updatePhoneNumber(phoneNumber);
+    } on AuthException catch (e) {
+      throw AuthFailure(e.message);
+    } catch (e) {
+      throw const AuthFailure('Failed to update phone number.');
+    }
+  }
+
+  @override
   Future<void> logout() async {
     await remoteDataSource.logout();
   }
