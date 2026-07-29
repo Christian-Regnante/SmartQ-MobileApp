@@ -57,42 +57,26 @@ class _ClientHomePageState extends State<ClientHomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
-              Row(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Good morning, $userName 👋',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.onSurface,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'Queue Less. Live More.',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: AppColors.outline,
-                          ),
-                        ),
-                      ],
+                  Text(
+                    'Good morning, $userName 👋',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.onSurface,
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceContainerLow,
-                      shape: BoxShape.circle,
+                  const SizedBox(height: 2),
+                  Text(
+                    'Queue Less. Live More.',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppColors.outline,
                     ),
-                    child: Icon(Icons.person, color: AppColors.primary),
                   ),
                 ],
               ),
