@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/form_validators.dart';
 import '../../../../core/widgets/neumorphic_card.dart';
 import '../../../../core/widgets/state_widgets.dart';
 import '../../../auth/domain/entities/user_entity.dart';
@@ -39,6 +40,7 @@ class _SuperAdminAdminsPageState extends State<SuperAdminAdminsPage> {
     }
 
     final cubit = context.read<SuperAdminCubit>();
+    final formKey = GlobalKey<FormState>();
     final emailCtrl = TextEditingController();
     final passCtrl = TextEditingController(text: 'Admin123!');
     final nameCtrl = TextEditingController();
@@ -55,44 +57,51 @@ class _SuperAdminAdminsPageState extends State<SuperAdminAdminsPage> {
               content: SizedBox(
                 width: 440,
                 child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextField(
-                        controller: nameCtrl,
-                        decoration: const InputDecoration(labelText: 'Full Name'),
-                      ),
-                      const SizedBox(height: 10),
-                      TextField(
-                        controller: emailCtrl,
-                        decoration: const InputDecoration(labelText: 'Admin Email'),
-                        keyboardType: TextInputType.emailAddress,
-                      ),
-                      const SizedBox(height: 10),
-                      TextField(
-                        controller: passCtrl,
-                        decoration: const InputDecoration(labelText: 'Initial Password'),
-                      ),
-                      const SizedBox(height: 16),
-                      DropdownButtonFormField<String>(
-                        initialValue: selectedOrgId,
-                        decoration: const InputDecoration(
-                          labelText: 'Assigned Institution',
-                          border: OutlineInputBorder(),
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextFormField(
+                          controller: nameCtrl,
+                          decoration: const InputDecoration(labelText: 'Full Name *'),
+                          validator: (v) => FormValidators.required(v, 'Full name'),
                         ),
-                        items: availableOrgs.map((org) {
-                          return DropdownMenuItem<String>(
-                            value: org.id,
-                            child: Text(org.name, overflow: TextOverflow.ellipsis),
-                          );
-                        }).toList(),
-                        onChanged: (val) {
-                          if (val != null) {
-                            setDialogState(() => selectedOrgId = val);
-                          }
-                        },
-                      ),
-                    ],
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: emailCtrl,
+                          decoration: const InputDecoration(labelText: 'Admin Email *'),
+                          keyboardType: TextInputType.emailAddress,
+                          validator: FormValidators.email,
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: passCtrl,
+                          decoration: const InputDecoration(labelText: 'Initial Password *'),
+                          validator: FormValidators.password,
+                        ),
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<String>(
+                          initialValue: selectedOrgId,
+                          decoration: const InputDecoration(
+                            labelText: 'Assigned Institution *',
+                            border: OutlineInputBorder(),
+                          ),
+                          items: availableOrgs.map((org) {
+                            return DropdownMenuItem<String>(
+                              value: org.id,
+                              child: Text(org.name, overflow: TextOverflow.ellipsis),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            if (val != null) {
+                              setDialogState(() => selectedOrgId = val);
+                            }
+                          },
+                          validator: (v) => FormValidators.dropdownRequired(v, 'institution'),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -100,15 +109,14 @@ class _SuperAdminAdminsPageState extends State<SuperAdminAdminsPage> {
                 TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
                 ElevatedButton(
                   onPressed: () {
-                    if (emailCtrl.text.isNotEmpty && nameCtrl.text.isNotEmpty && selectedOrgId.isNotEmpty) {
-                      cubit.provisionAdmin(
-                        email: emailCtrl.text.trim(),
-                        password: passCtrl.text.trim(),
-                        fullName: nameCtrl.text.trim(),
-                        organizationId: selectedOrgId,
-                      );
-                      Navigator.pop(ctx);
-                    }
+                    if (!(formKey.currentState?.validate() ?? false)) return;
+                    cubit.provisionAdmin(
+                      email: emailCtrl.text.trim(),
+                      password: passCtrl.text.trim(),
+                      fullName: nameCtrl.text.trim(),
+                      organizationId: selectedOrgId,
+                    );
+                    Navigator.pop(ctx);
                   },
                   child: const Text('Provision Account'),
                 ),
@@ -122,6 +130,7 @@ class _SuperAdminAdminsPageState extends State<SuperAdminAdminsPage> {
 
   void _showEditAdminDialog(UserEntity admin, List<OrganizationEntity> availableOrgs) {
     final cubit = context.read<SuperAdminCubit>();
+    final formKey = GlobalKey<FormState>();
     final nameCtrl = TextEditingController(text: admin.fullName);
     final emailCtrl = TextEditingController(text: admin.email);
     String? selectedOrgId = admin.organizationId ?? (availableOrgs.isNotEmpty ? availableOrgs.first.id : null);
@@ -138,48 +147,54 @@ class _SuperAdminAdminsPageState extends State<SuperAdminAdminsPage> {
               content: SizedBox(
                 width: 440,
                 child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextField(
-                        controller: nameCtrl,
-                        decoration: const InputDecoration(labelText: 'Full Name'),
-                      ),
-                      const SizedBox(height: 10),
-                      TextField(
-                        controller: emailCtrl,
-                        decoration: const InputDecoration(labelText: 'Admin Email'),
-                        keyboardType: TextInputType.emailAddress,
-                      ),
-                      const SizedBox(height: 16),
-                      if (availableOrgs.isNotEmpty)
-                        DropdownButtonFormField<String>(
-                          initialValue: selectedOrgId,
-                          decoration: const InputDecoration(
-                            labelText: 'Assigned Institution',
-                            border: OutlineInputBorder(),
-                          ),
-                          items: availableOrgs.map((org) {
-                            return DropdownMenuItem<String>(
-                              value: org.id,
-                              child: Text(org.name, overflow: TextOverflow.ellipsis),
-                            );
-                          }).toList(),
-                          onChanged: (val) {
-                            if (val != null) {
-                              setDialogState(() => selectedOrgId = val);
-                            }
-                          },
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextFormField(
+                          controller: nameCtrl,
+                          decoration: const InputDecoration(labelText: 'Full Name *'),
+                          validator: (v) => FormValidators.required(v, 'Full name'),
                         ),
-                      const SizedBox(height: 12),
-                      SwitchListTile(
-                        title: Text('Account Status'),
-                        subtitle: Text(isActive ? 'Active' : 'Disabled'),
-                        value: isActive,
-                        activeThumbColor: AppColors.primary,
-                        onChanged: (val) => setDialogState(() => isActive = val),
-                      ),
-                    ],
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: emailCtrl,
+                          decoration: const InputDecoration(labelText: 'Admin Email *'),
+                          keyboardType: TextInputType.emailAddress,
+                          validator: FormValidators.email,
+                        ),
+                        const SizedBox(height: 16),
+                        if (availableOrgs.isNotEmpty)
+                          DropdownButtonFormField<String>(
+                            initialValue: selectedOrgId,
+                            decoration: const InputDecoration(
+                              labelText: 'Assigned Institution *',
+                              border: OutlineInputBorder(),
+                            ),
+                            items: availableOrgs.map((org) {
+                              return DropdownMenuItem<String>(
+                                value: org.id,
+                                child: Text(org.name, overflow: TextOverflow.ellipsis),
+                              );
+                            }).toList(),
+                            onChanged: (val) {
+                              if (val != null) {
+                                setDialogState(() => selectedOrgId = val);
+                              }
+                            },
+                            validator: (v) => FormValidators.dropdownRequired(v, 'institution'),
+                          ),
+                        const SizedBox(height: 12),
+                        SwitchListTile(
+                          title: const Text('Account Status'),
+                          subtitle: Text(isActive ? 'Active' : 'Disabled'),
+                          value: isActive,
+                          activeThumbColor: AppColors.primary,
+                          onChanged: (val) => setDialogState(() => isActive = val),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -187,16 +202,15 @@ class _SuperAdminAdminsPageState extends State<SuperAdminAdminsPage> {
                 TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
                 ElevatedButton(
                   onPressed: () {
-                    if (nameCtrl.text.isNotEmpty && emailCtrl.text.isNotEmpty) {
-                      cubit.updateAdmin(
-                        adminId: admin.id,
-                        fullName: nameCtrl.text.trim(),
-                        email: emailCtrl.text.trim(),
-                        organizationId: selectedOrgId,
-                        isActive: isActive,
-                      );
-                      Navigator.pop(ctx);
-                    }
+                    if (!(formKey.currentState?.validate() ?? false)) return;
+                    cubit.updateAdmin(
+                      adminId: admin.id,
+                      fullName: nameCtrl.text.trim(),
+                      email: emailCtrl.text.trim(),
+                      organizationId: selectedOrgId,
+                      isActive: isActive,
+                    );
+                    Navigator.pop(ctx);
                   },
                   child: const Text('Save Changes'),
                 ),
