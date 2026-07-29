@@ -20,6 +20,24 @@ class NotificationRemoteDataSource {
     });
   }
 
+  Stream<int> streamUnreadCount(String userId) {
+    return _firestore
+        .collection('notifications')
+        .where('userId', isEqualTo: userId)
+        .where('isRead', isEqualTo: false)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length);
+  }
+
+  Future<void> markAsRead(String notificationId) async {
+    try {
+      await _firestore
+          .collection('notifications')
+          .doc(notificationId)
+          .update({'isRead': true});
+    } catch (_) {}
+  }
+
   Future<void> createNotification({
     required String userId,
     required String title,
