@@ -43,7 +43,10 @@ class _ClientHomePageState extends State<ClientHomePage> {
   @override
   Widget build(BuildContext context) {
     final authState = context.watch<AuthBloc>().state;
-    final userName = authState is Authenticated ? authState.user.fullName : 'Client';
+    final fullName = authState is Authenticated ? authState.user.fullName : 'Client';
+    final userName = fullName.trim().isEmpty
+        ? 'Client'
+        : fullName.trim().split(RegExp(r'\s+')).first;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -55,29 +58,33 @@ class _ClientHomePageState extends State<ClientHomePage> {
             children: [
               // Header
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Good morning, $userName 👋',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.onSurface,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Good morning, $userName 👋',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.onSurface,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Queue Less. Live More.',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: AppColors.outline,
+                        const SizedBox(height: 2),
+                        Text(
+                          'Queue Less. Live More.',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: AppColors.outline,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
+                  const SizedBox(width: 12),
                   Container(
                     width: 44,
                     height: 44,
