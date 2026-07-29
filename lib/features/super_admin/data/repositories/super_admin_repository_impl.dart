@@ -2,6 +2,7 @@ import '../../../../core/errors/exceptions.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../auth/domain/entities/user_entity.dart';
 import '../../../organizations/domain/entities/organization_entity.dart';
+import '../../domain/entities/national_analytics_entity.dart';
 import '../../domain/repositories/super_admin_repository.dart';
 import '../datasources/super_admin_remote_data_source.dart';
 
@@ -22,6 +23,17 @@ class SuperAdminRepositoryImpl implements SuperAdminRepository {
   }
 
   @override
+  Future<NationalAnalyticsEntity> getNationalAnalytics() async {
+    try {
+      return await remoteDataSource.getNationalAnalytics();
+    } on ServerException catch (e) {
+      throw ServerFailure(e.message);
+    } catch (e) {
+      throw const ServerFailure('Failed to load national analytics');
+    }
+  }
+
+  @override
   Future<void> createOrganization({
     required String name,
     required String description,
@@ -29,6 +41,7 @@ class SuperAdminRepositoryImpl implements SuperAdminRepository {
     required String address,
     required String phoneNumber,
     required String email,
+    String sector = 'Other',
   }) async {
     try {
       await remoteDataSource.createOrganization(
@@ -38,6 +51,7 @@ class SuperAdminRepositoryImpl implements SuperAdminRepository {
         address: address,
         phoneNumber: phoneNumber,
         email: email,
+        sector: sector,
       );
     } on ServerException catch (e) {
       throw ServerFailure(e.message);
@@ -56,6 +70,7 @@ class SuperAdminRepositoryImpl implements SuperAdminRepository {
     required String phoneNumber,
     required String email,
     required bool isActive,
+    String sector = 'Other',
   }) async {
     try {
       await remoteDataSource.updateOrganization(
@@ -67,6 +82,7 @@ class SuperAdminRepositoryImpl implements SuperAdminRepository {
         phoneNumber: phoneNumber,
         email: email,
         isActive: isActive,
+        sector: sector,
       );
     } on ServerException catch (e) {
       throw ServerFailure(e.message);
