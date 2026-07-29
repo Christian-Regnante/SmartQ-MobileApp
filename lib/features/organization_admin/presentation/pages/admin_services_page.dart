@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/form_validators.dart';
 import '../../../../core/widgets/neumorphic_card.dart';
 import '../../../../core/widgets/state_widgets.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
@@ -27,6 +28,7 @@ class _AdminServicesPageState extends State<AdminServicesPage> {
 
   void _showAddServiceDialog(String organizationId) {
     final cubit = context.read<AdminCubit>();
+    final formKey = GlobalKey<FormState>();
     final nameCtrl = TextEditingController();
     final descCtrl = TextEditingController();
     final counterCtrl = TextEditingController(text: 'Counter 1');
@@ -44,52 +46,60 @@ class _AdminServicesPageState extends State<AdminServicesPage> {
               content: SizedBox(
                 width: 420,
                 child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextField(
-                        controller: nameCtrl,
-                        decoration: const InputDecoration(labelText: 'Service Name (e.g. Consultation)'),
-                      ),
-                      const SizedBox(height: 10),
-                      TextField(
-                        controller: descCtrl,
-                        decoration: const InputDecoration(labelText: 'Description'),
-                      ),
-                      const SizedBox(height: 10),
-                      TextField(
-                        controller: counterCtrl,
-                        decoration: const InputDecoration(labelText: 'Counter / Station Number'),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: TextField(
-                              controller: timeValCtrl,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(labelText: 'Avg. Waiting Time'),
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextFormField(
+                          controller: nameCtrl,
+                          decoration: const InputDecoration(labelText: 'Service Name *'),
+                          validator: (v) => FormValidators.required(v, 'Service name'),
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: descCtrl,
+                          decoration: const InputDecoration(labelText: 'Description (optional)'),
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: counterCtrl,
+                          decoration: const InputDecoration(labelText: 'Counter / Station Number *'),
+                          validator: (v) => FormValidators.required(v, 'Counter / station number'),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: TextFormField(
+                                controller: timeValCtrl,
+                                keyboardType: TextInputType.number,
+                                decoration: const InputDecoration(labelText: 'Avg. Waiting Time *'),
+                                validator: (v) => FormValidators.positiveNumber(v, 'Avg. waiting time'),
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            flex: 2,
-                            child: DropdownButtonFormField<String>(
-                              initialValue: timeUnit,
-                              decoration: const InputDecoration(labelText: 'Time Format'),
-                              items: const [
-                                DropdownMenuItem(value: 'Minutes', child: Text('Minutes')),
-                                DropdownMenuItem(value: 'Hours', child: Text('Hours')),
-                              ],
-                              onChanged: (val) {
-                                if (val != null) setDialogState(() => timeUnit = val);
-                              },
+                            const SizedBox(width: 10),
+                            Expanded(
+                              flex: 2,
+                              child: DropdownButtonFormField<String>(
+                                initialValue: timeUnit,
+                                decoration: const InputDecoration(labelText: 'Time Format *'),
+                                items: const [
+                                  DropdownMenuItem(value: 'Minutes', child: Text('Minutes')),
+                                  DropdownMenuItem(value: 'Hours', child: Text('Hours')),
+                                ],
+                                onChanged: (val) {
+                                  if (val != null) setDialogState(() => timeUnit = val);
+                                },
+                                validator: (v) => FormValidators.dropdownRequired(v, 'time format'),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -97,19 +107,18 @@ class _AdminServicesPageState extends State<AdminServicesPage> {
                 TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
                 ElevatedButton(
                   onPressed: () {
-                    if (nameCtrl.text.isNotEmpty) {
-                      final rawNum = double.tryParse(timeValCtrl.text.trim()) ?? 15;
-                      final minutes = timeUnit == 'Hours' ? (rawNum * 60).round() : rawNum.round();
+                    if (!(formKey.currentState?.validate() ?? false)) return;
+                    final rawNum = double.parse(timeValCtrl.text.trim());
+                    final minutes = timeUnit == 'Hours' ? (rawNum * 60).round() : rawNum.round();
 
-                      cubit.addService(
-                        organizationId: organizationId,
-                        name: nameCtrl.text.trim(),
-                        description: descCtrl.text.trim(),
-                        counterNumber: counterCtrl.text.trim(),
-                        averageServiceTimeMinutes: minutes,
-                      );
-                      Navigator.pop(ctx);
-                    }
+                    cubit.addService(
+                      organizationId: organizationId,
+                      name: nameCtrl.text.trim(),
+                      description: descCtrl.text.trim(),
+                      counterNumber: counterCtrl.text.trim(),
+                      averageServiceTimeMinutes: minutes,
+                    );
+                    Navigator.pop(ctx);
                   },
                   child: const Text('Create Service'),
                 ),
@@ -123,6 +132,7 @@ class _AdminServicesPageState extends State<AdminServicesPage> {
 
   void _showEditServiceDialog(String organizationId, ServiceEntity service) {
     final cubit = context.read<AdminCubit>();
+    final formKey = GlobalKey<FormState>();
     final nameCtrl = TextEditingController(text: service.name);
     final descCtrl = TextEditingController(text: service.description ?? '');
     final counterCtrl = TextEditingController(text: service.counterNumber ?? 'Counter 1');
@@ -141,60 +151,68 @@ class _AdminServicesPageState extends State<AdminServicesPage> {
               content: SizedBox(
                 width: 420,
                 child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextField(
-                        controller: nameCtrl,
-                        decoration: const InputDecoration(labelText: 'Service Name'),
-                      ),
-                      const SizedBox(height: 10),
-                      TextField(
-                        controller: descCtrl,
-                        decoration: const InputDecoration(labelText: 'Description'),
-                      ),
-                      const SizedBox(height: 10),
-                      TextField(
-                        controller: counterCtrl,
-                        decoration: const InputDecoration(labelText: 'Counter / Station Number'),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: TextField(
-                              controller: timeValCtrl,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(labelText: 'Avg. Waiting Time'),
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextFormField(
+                          controller: nameCtrl,
+                          decoration: const InputDecoration(labelText: 'Service Name *'),
+                          validator: (v) => FormValidators.required(v, 'Service name'),
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: descCtrl,
+                          decoration: const InputDecoration(labelText: 'Description (optional)'),
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: counterCtrl,
+                          decoration: const InputDecoration(labelText: 'Counter / Station Number *'),
+                          validator: (v) => FormValidators.required(v, 'Counter / station number'),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: TextFormField(
+                                controller: timeValCtrl,
+                                keyboardType: TextInputType.number,
+                                decoration: const InputDecoration(labelText: 'Avg. Waiting Time *'),
+                                validator: (v) => FormValidators.positiveNumber(v, 'Avg. waiting time'),
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            flex: 2,
-                            child: DropdownButtonFormField<String>(
-                              initialValue: timeUnit,
-                              decoration: const InputDecoration(labelText: 'Time Format'),
-                              items: const [
-                                DropdownMenuItem(value: 'Minutes', child: Text('Minutes')),
-                                DropdownMenuItem(value: 'Hours', child: Text('Hours')),
-                              ],
-                              onChanged: (val) {
-                                if (val != null) setDialogState(() => timeUnit = val);
-                              },
+                            const SizedBox(width: 10),
+                            Expanded(
+                              flex: 2,
+                              child: DropdownButtonFormField<String>(
+                                initialValue: timeUnit,
+                                decoration: const InputDecoration(labelText: 'Time Format *'),
+                                items: const [
+                                  DropdownMenuItem(value: 'Minutes', child: Text('Minutes')),
+                                  DropdownMenuItem(value: 'Hours', child: Text('Hours')),
+                                ],
+                                onChanged: (val) {
+                                  if (val != null) setDialogState(() => timeUnit = val);
+                                },
+                                validator: (v) => FormValidators.dropdownRequired(v, 'time format'),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      SwitchListTile(
-                        title: Text('Desk Status'),
-                        subtitle: Text(isActive ? 'Active' : 'Inactive / Closed'),
-                        value: isActive,
-                        activeThumbColor: AppColors.primary,
-                        onChanged: (val) => setDialogState(() => isActive = val),
-                      ),
-                    ],
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        SwitchListTile(
+                          title: const Text('Desk Status'),
+                          subtitle: Text(isActive ? 'Active' : 'Inactive / Closed'),
+                          value: isActive,
+                          activeThumbColor: AppColors.primary,
+                          onChanged: (val) => setDialogState(() => isActive = val),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -202,21 +220,20 @@ class _AdminServicesPageState extends State<AdminServicesPage> {
                 TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
                 ElevatedButton(
                   onPressed: () {
-                    if (nameCtrl.text.isNotEmpty) {
-                      final rawNum = double.tryParse(timeValCtrl.text.trim()) ?? 15;
-                      final minutes = timeUnit == 'Hours' ? (rawNum * 60).round() : rawNum.round();
+                    if (!(formKey.currentState?.validate() ?? false)) return;
+                    final rawNum = double.parse(timeValCtrl.text.trim());
+                    final minutes = timeUnit == 'Hours' ? (rawNum * 60).round() : rawNum.round();
 
-                      cubit.updateService(
-                        organizationId: organizationId,
-                        serviceId: service.id,
-                        name: nameCtrl.text.trim(),
-                        description: descCtrl.text.trim(),
-                        counterNumber: counterCtrl.text.trim(),
-                        averageServiceTimeMinutes: minutes,
-                        isActive: isActive,
-                      );
-                      Navigator.pop(ctx);
-                    }
+                    cubit.updateService(
+                      organizationId: organizationId,
+                      serviceId: service.id,
+                      name: nameCtrl.text.trim(),
+                      description: descCtrl.text.trim(),
+                      counterNumber: counterCtrl.text.trim(),
+                      averageServiceTimeMinutes: minutes,
+                      isActive: isActive,
+                    );
+                    Navigator.pop(ctx);
                   },
                   child: const Text('Save Changes'),
                 ),
