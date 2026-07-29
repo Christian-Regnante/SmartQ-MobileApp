@@ -33,13 +33,13 @@ class AuthRegisterRequested extends AuthEvent {
   final String email;
   final String password;
   final String fullName;
-  final String? phoneNumber;
+  final String phoneNumber;
 
   const AuthRegisterRequested({
     required this.email,
     required this.password,
     required this.fullName,
-    this.phoneNumber,
+    required this.phoneNumber,
   });
 
   @override
@@ -47,5 +47,14 @@ class AuthRegisterRequested extends AuthEvent {
 }
 
 class AuthGoogleSignInRequested extends AuthEvent {}
+
+class AuthUpdatePhoneRequested extends AuthEvent {
+  final String phoneNumber;
+
+  const AuthUpdatePhoneRequested({required this.phoneNumber});
+
+  @override
+  List<Object?> get props => [phoneNumber];
+}
 
 class AuthLogoutRequested extends AuthEvent {}
