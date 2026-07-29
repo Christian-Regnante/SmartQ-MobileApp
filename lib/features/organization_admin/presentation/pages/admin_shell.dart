@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/route_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_shadows.dart';
+import '../../../../core/theme/theme_cubit.dart';
 
 class AdminShell extends StatelessWidget {
   final Widget child;
@@ -40,6 +42,7 @@ class AdminShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<ThemeCubit>(); // rebuild nav bar colors on theme toggle
     final selectedIndex = _calculateSelectedIndex(context);
 
     return Scaffold(
