@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1097516457844",
+    "project_id": "smartq-rwanda",
+    "storage_bucket": "smartq-rwanda.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1097516457844:android:4b91c230ecc06848f75621",
+        "android_client_info": {
+          "package_name": "com.example.smartq_mobile_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1097516457844-a35dc1ooa7urp8vrlblv0k1rkjubcrbg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.smartq_mobile_app",
+            "certificate_hash": "f3014703ae1e5ba2d850aafa1fc327b502cccd11"
+          }
+        },
+        {
+          "client_id": "1097516457844-lbvn3mgi25uv54amsd40h8qu7lgti2sr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.smartq_mobile_app",
+            "certificate_hash": "ab2a1c46df82c6439b6411ab9a9a972edc28b163"
+          }
+        },
+        {
+          "client_id": "1097516457844-h6a32fu2gkngr5kl6iqo0rcvgos0ol3s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3t5tpMQNcULaZ2BRT_FD3wNG4pURqors"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1097516457844-h6a32fu2gkngr5kl6iqo0rcvgos0ol3s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
