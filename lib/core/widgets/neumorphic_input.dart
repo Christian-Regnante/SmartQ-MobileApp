@@ -96,6 +96,12 @@ class _NeumorphicInputState extends State<NeumorphicInput> {
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 errorBorder: InputBorder.none,
+                focusedErrorBorder: InputBorder.none,
+                errorStyle: TextStyle(
+                  color: AppColors.error,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
                 contentPadding: const EdgeInsets.symmetric(vertical: 14),
               ),
             ),
