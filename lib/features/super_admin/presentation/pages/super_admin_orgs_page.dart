@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/form_validators.dart';
 import '../../../../core/widgets/neumorphic_card.dart';
 import '../../../../core/widgets/state_widgets.dart';
 import '../../../organizations/domain/entities/organization_entity.dart';
@@ -22,62 +23,90 @@ class _SuperAdminOrgsPageState extends State<SuperAdminOrgsPage> {
 
   void _showAddOrgDialog() {
     final cubit = context.read<SuperAdminCubit>();
+    final formKey = GlobalKey<FormState>();
     final nameCtrl = TextEditingController();
     final descCtrl = TextEditingController();
     final locCtrl = TextEditingController(text: 'Kigali, Rwanda');
     final emailCtrl = TextEditingController();
+    String selectedSector = 'Healthcare';
 
     showDialog(
       context: context,
       builder: (ctx) => BlocProvider.value(
         value: cubit,
-        child: AlertDialog(
-          title: const Text('Register New Institution'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: nameCtrl,
-                  decoration: const InputDecoration(labelText: 'Organization Name'),
+        child: StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: const Text('Register New Institution'),
+              content: SingleChildScrollView(
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextFormField(
+                        controller: nameCtrl,
+                        decoration: const InputDecoration(labelText: 'Organization Name *'),
+                        validator: (v) => FormValidators.required(v, 'Organization name'),
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        controller: descCtrl,
+                        decoration: const InputDecoration(labelText: 'Description (optional)'),
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        controller: locCtrl,
+                        decoration: const InputDecoration(labelText: 'Location / Address *'),
+                        validator: (v) => FormValidators.required(v, 'Location'),
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        controller: emailCtrl,
+                        decoration: const InputDecoration(labelText: 'Official Email *'),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: FormValidators.email,
+                      ),
+                      const SizedBox(height: 10),
+                      DropdownButtonFormField<String>(
+                        initialValue: selectedSector,
+                        decoration: const InputDecoration(labelText: 'Sector *'),
+                        items: const [
+                          DropdownMenuItem(value: 'Healthcare', child: Text('Healthcare')),
+                          DropdownMenuItem(value: 'Banking & Financial', child: Text('Banking & Financial')),
+                          DropdownMenuItem(value: 'Government e-Services', child: Text('Government e-Services')),
+                          DropdownMenuItem(value: 'Other', child: Text('Other')),
+                        ],
+                        onChanged: (val) {
+                          if (val != null) setDialogState(() => selectedSector = val);
+                        },
+                        validator: (v) => FormValidators.dropdownRequired(v, 'sector'),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: descCtrl,
-                  decoration: const InputDecoration(labelText: 'Description'),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: locCtrl,
-                  decoration: const InputDecoration(labelText: 'Location / Address'),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: emailCtrl,
-                  decoration: const InputDecoration(labelText: 'Official Email'),
+              ),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+                ElevatedButton(
+                  onPressed: () {
+                    if (!(formKey.currentState?.validate() ?? false)) return;
+                    cubit.addOrganization(
+                      name: nameCtrl.text.trim(),
+                      description: descCtrl.text.trim(),
+                      location: locCtrl.text.trim(),
+                      address: locCtrl.text.trim(),
+                      phoneNumber: '+250788000111',
+                      email: emailCtrl.text.trim(),
+                      sector: selectedSector,
+                    );
+                    Navigator.pop(ctx);
+                  },
+                  child: const Text('Register'),
                 ),
               ],
-            ),
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-            ElevatedButton(
-              onPressed: () {
-                if (nameCtrl.text.isNotEmpty) {
-                  cubit.addOrganization(
-                    name: nameCtrl.text.trim(),
-                    description: descCtrl.text.trim(),
-                    location: locCtrl.text.trim(),
-                    address: locCtrl.text.trim(),
-                    phoneNumber: '+250 788 000 111',
-                    email: emailCtrl.text.trim(),
-                  );
-                  Navigator.pop(ctx);
-                }
-              },
-              child: const Text('Register'),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
@@ -85,11 +114,13 @@ class _SuperAdminOrgsPageState extends State<SuperAdminOrgsPage> {
 
   void _showEditOrgDialog(OrganizationEntity org) {
     final cubit = context.read<SuperAdminCubit>();
+    final formKey = GlobalKey<FormState>();
     final nameCtrl = TextEditingController(text: org.name);
     final descCtrl = TextEditingController(text: org.description ?? '');
     final locCtrl = TextEditingController(text: org.location);
     final emailCtrl = TextEditingController(text: org.email ?? '');
     bool isActive = org.isActive;
+    String selectedSector = org.sector;
 
     showDialog(
       context: context,
@@ -98,58 +129,80 @@ class _SuperAdminOrgsPageState extends State<SuperAdminOrgsPage> {
         child: StatefulBuilder(
           builder: (dCtx, setDialogState) {
             return AlertDialog(
-              title: Text('Edit Organization'),
+              title: const Text('Edit Organization'),
               content: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      controller: nameCtrl,
-                      decoration: const InputDecoration(labelText: 'Organization Name'),
-                    ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      controller: descCtrl,
-                      decoration: const InputDecoration(labelText: 'Description'),
-                    ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      controller: locCtrl,
-                      decoration: const InputDecoration(labelText: 'Location / Address'),
-                    ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      controller: emailCtrl,
-                      decoration: const InputDecoration(labelText: 'Official Email'),
-                    ),
-                    const SizedBox(height: 12),
-                    SwitchListTile(
-                      title: const Text('Operational Status'),
-                      subtitle: Text(isActive ? 'Active' : 'Inactive / Deactivated'),
-                      value: isActive,
-                      activeThumbColor: AppColors.primary,
-                      onChanged: (val) => setDialogState(() => isActive = val),
-                    ),
-                  ],
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextFormField(
+                        controller: nameCtrl,
+                        decoration: const InputDecoration(labelText: 'Organization Name *'),
+                        validator: (v) => FormValidators.required(v, 'Organization name'),
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        controller: descCtrl,
+                        decoration: const InputDecoration(labelText: 'Description (optional)'),
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        controller: locCtrl,
+                        decoration: const InputDecoration(labelText: 'Location / Address *'),
+                        validator: (v) => FormValidators.required(v, 'Location'),
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        controller: emailCtrl,
+                        decoration: const InputDecoration(labelText: 'Official Email *'),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: FormValidators.email,
+                      ),
+                      const SizedBox(height: 10),
+                      DropdownButtonFormField<String>(
+                        initialValue: selectedSector,
+                        decoration: const InputDecoration(labelText: 'Sector *'),
+                        items: const [
+                          DropdownMenuItem(value: 'Healthcare', child: Text('Healthcare')),
+                          DropdownMenuItem(value: 'Banking & Financial', child: Text('Banking & Financial')),
+                          DropdownMenuItem(value: 'Government e-Services', child: Text('Government e-Services')),
+                          DropdownMenuItem(value: 'Other', child: Text('Other')),
+                        ],
+                        onChanged: (val) {
+                          if (val != null) setDialogState(() => selectedSector = val);
+                        },
+                        validator: (v) => FormValidators.dropdownRequired(v, 'sector'),
+                      ),
+                      const SizedBox(height: 12),
+                      SwitchListTile(
+                        title: const Text('Operational Status'),
+                        subtitle: Text(isActive ? 'Active' : 'Inactive / Deactivated'),
+                        value: isActive,
+                        activeThumbColor: AppColors.primary,
+                        onChanged: (val) => setDialogState(() => isActive = val),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               actions: [
                 TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
                 ElevatedButton(
                   onPressed: () {
-                    if (nameCtrl.text.isNotEmpty) {
-                      cubit.updateOrganization(
-                        id: org.id,
-                        name: nameCtrl.text.trim(),
-                        description: descCtrl.text.trim(),
-                        location: locCtrl.text.trim(),
-                        address: locCtrl.text.trim(),
-                        phoneNumber: org.phoneNumber ?? '+250 788 000 111',
-                        email: emailCtrl.text.trim(),
-                        isActive: isActive,
-                      );
-                      Navigator.pop(ctx);
-                    }
+                    if (!(formKey.currentState?.validate() ?? false)) return;
+                    cubit.updateOrganization(
+                      id: org.id,
+                      name: nameCtrl.text.trim(),
+                      description: descCtrl.text.trim(),
+                      location: locCtrl.text.trim(),
+                      address: locCtrl.text.trim(),
+                      phoneNumber: org.phoneNumber ?? '+250788000111',
+                      email: emailCtrl.text.trim(),
+                      isActive: isActive,
+                      sector: selectedSector,
+                    );
+                    Navigator.pop(ctx);
                   },
                   child: const Text('Save Changes'),
                 ),
