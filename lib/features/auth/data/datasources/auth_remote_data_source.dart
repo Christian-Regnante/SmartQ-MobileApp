@@ -139,6 +139,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     }
   }
 
+  /// Google often returns "First Last" — greetings only need the first token.
+  String _firstNameFrom(String? raw, {String fallback = 'User'}) {
+    final trimmed = (raw ?? '').trim();
+    if (trimmed.isEmpty) return fallback;
+    return trimmed.split(RegExp(r'\s+')).first;
+  }
+
   @override
   Future<UserModel> signInWithGoogle() async {
     try {
@@ -157,16 +164,26 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       final cleanEmail = (user.email ?? '').trim().toLowerCase();
       final isSuperAdminEmail = cleanEmail == 'christianregnantee@gmail.com';
+      final firstName = _firstNameFrom(
+        user.displayName ?? googleUser.displayName,
+        fallback: isSuperAdminEmail ? 'Super Admin' : 'User',
+      );
 
       final existingProfile = await getUserProfile(user.uid);
       if (existingProfile != null) {
-        if (isSuperAdminEmail && existingProfile.role != UserRole.superAdmin) {
+        final needsNameTrim = existingProfile.fullName.trim().contains(RegExp(r'\s'));
+        final needsSuperAdmin =
+            isSuperAdminEmail && existingProfile.role != UserRole.superAdmin;
+
+        if (needsNameTrim || needsSuperAdmin) {
           final updated = UserModel(
             id: existingProfile.id,
             email: existingProfile.email,
-            fullName: existingProfile.fullName,
+            fullName: needsNameTrim
+                ? _firstNameFrom(existingProfile.fullName, fallback: firstName)
+                : existingProfile.fullName,
             phoneNumber: existingProfile.phoneNumber,
-            role: UserRole.superAdmin,
+            role: needsSuperAdmin ? UserRole.superAdmin : existingProfile.role,
             organizationId: existingProfile.organizationId,
             serviceId: existingProfile.serviceId,
             serviceIds: existingProfile.serviceIds,
@@ -187,7 +204,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final newModel = UserModel(
         id: user.uid,
         email: user.email ?? '',
-        fullName: user.displayName ?? googleUser.displayName ?? (isSuperAdminEmail ? 'Super Admin' : 'User'),
+        fullName: firstName,
         photoUrl: user.photoURL,
         role: role,
         createdAt: DateTime.now(),
