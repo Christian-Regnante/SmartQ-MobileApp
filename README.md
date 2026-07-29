@@ -1,12 +1,12 @@
-# SmartQ Rwanda 🚀
+# SmartQ Rwanda
 
-SmartQ Rwanda is an enterprise-grade, real-time Queue Management System built with **Flutter**, **Clean Architecture**, **BLoC 8+**, and **Firebase Cloud Firestore**. 
+SmartQ Rwanda is a real-time queue management system built with **Flutter**, **Clean Architecture**, **BLoC 8+**, and **Firebase** (Auth + Cloud Firestore).
 
-The application streamlines queue management across institutions (such as hospitals, banks, public utilities, and service centers) in Rwanda, providing role-based workflows for **Super Admins**, **Organization Admins**, **Staff Service Desks**, and **Clients**.
+It streamlines queues across institutions in Rwanda (hospitals, banks, government services, and more), with role-based workflows for **Super Admins**, **Organization Admins**, **Staff**, and **Clients**.
 
 ---
 
-## 🌟 Key Features & Role Matrix
+## Key Features & Roles
 
 ```
                      ┌───────────────────────────────────────────────┐
@@ -17,193 +17,167 @@ The application streamlines queue management across institutions (such as hospit
       ▼                  ▼                   ▼                   ▼                  ▼
 ┌──────────────┐  ┌──────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐
 │ SUPER ADMIN  │  │  ORG ADMIN   │   │    STAFF     │   │    CLIENT    │   │ NOTIFICATIONS│
-│ - Org Setup  │  │ - Service    │   │ - Serving Box│   │ - Join Queue │   │ - Real-Time  │
-│ - Admin Assign  │ Desks        │   │ - Single Call│   │ - Live Status│   │ Alerts       │
-│ - Analytics  │  │ - Staff Desk │   │ - Skip/Cancel│   │ - Cancelled  │   │ - Status     │
-└──────────────┘  └──────────────┘   └──────────────┘   │ Tab          │   │ Changes      │
-                                                        └──────────────┘   └──────────────┘
+│ - Org CRUD   │  │ - Services   │   │ - Serving Box│   │ - Join Queue │   │ - Unread     │
+│ - Admins     │  │ - Staff      │   │ - Call/Skip  │   │ - Live Ticket│   │   badge      │
+│ - Live stats │  │ - Analytics  │   │ - Cancel     │   │ - Profile    │   │ - Mark read  │
+│ - Dark/Light │  │ - Dark/Light │   │ - Dark/Light │   │ - Google/Email│  │ - Real-time  │
+└──────────────┘  └──────────────┘   └──────────────┘   └──────────────┘   └──────────────┘
 ```
 
-### 1. 🛡️ Super Admin Management
-- **Organization Provisioning**: Create and manage institutions (e.g., King Faisal Hospital, Bank of Kigali).
-- **Admin Assignment**: Assign Organization Admins to manage institution-specific service desks.
-- **Global Overview**: System-wide analytics and user monitoring.
+### Super Admin
+- Register and manage institutions (name, location, email, **sector**, active/inactive).
+- Provision Organization Admins and assign them to institutions.
+- Live **Overview** stats driven by active organizations and today's tickets.
+- **National Analytics**: customers today, active counters (staff), average wait, platform SLA, sector distribution.
+- Audit logs and profile settings (including dark mode).
 
-### 2. 🏢 Organization Admin
-- **Service Desk Setup**: Configure service categories (e.g., Dental, Consultation, Teller, Customer Support), prefix codes, and average service durations.
-- **Staff Assignment**: Map service desks to assigned staff members.
+### Organization Admin
+- Create and manage **service desks** (name, counter, average wait time).
+- Provision and assign **staff** to service desks.
+- Form validation on create/edit with clear required-field messages.
 
-### 3. 👨‍💼 Staff Service Desk Dashboard
-- **Real-Time Currently Serving Box**: Displays live ticket number (`#A015`), organization name, service desk name, and active status.
-- **Dynamic Main Action Button**: Automatically toggles between `[ Call Next Customer 🔔 ]` (when idle) and `[ Complete Service ]` (when serving).
-- **Single Serving Ticket Protection**: Enforces atomic single-customer serving per staff member. Disables waiting list call buttons while serving a customer and shows warning guidance.
-- **Manual Ticket Selection**: Call specific waiting customers directly from card-level `[ Call ]` buttons.
-- **Skip Ticket Workflow**: Moves a non-responsive customer back to the **END** of the waiting line by updating creation and skip timestamps.
-- **Cancel Ticket Workflow**: Presents a confirmation modal and archives a snapshot document to `/cancelledTickets` without deleting historical audit logs.
-- **Counter Toggle**: Easily switch desk status between `OPEN` and `CLOSED`.
+### Staff Service Desk
+- Live currently-serving box and waiting queue.
+- Call next / call specific ticket, complete, skip, or cancel.
+- Counter **OPEN / CLOSED** toggle.
+- Single-serving protection while a customer is being served.
 
-### 4. 📱 Client Portal
-- **Organization & Service Discovery**: Search and select institutions and specific service desks.
-- **Queue Registration**: Join queue with estimated wait time calculation.
-- **Live Active Ticket Screen**: Real-time status updates (`WAITING` → `BEING SERVED` → `COMPLETED`).
-- **Dedicated Cancelled Tickets Tab**: Streams historical cancelled tickets directly from `/cancelledTickets` displaying Organization, Service, Ticket Number, Cancelled Date, and Reason.
-- **In-App Notifications**: Receive real-time alerts when a ticket is called, completed, skipped, or cancelled.
+### Client Portal
+- Discover organizations and services; join a queue with contact phone.
+- Live active ticket status (`WAITING` → `SERVING` → `DONE`).
+- Tickets history including cancelled tickets.
+- **Email/password** and **Google Sign-In**.
+- Required Rwanda phone (`+2507XXXXXXXX`) on register; editable later in Profile.
+- Forgot password via Firebase reset email.
+- In-app notifications with unread badge on **Alerts** and mark-as-read on tap.
+
+### Theming
+- Light mode and **Aetheric Depth** dark mode (persisted with `SharedPreferences`).
+- Bottom navigation shells rebuild immediately on theme toggle.
 
 ---
 
-## 🏗️ Architecture & Technology Stack
-
-SmartQ Rwanda adheres strictly to **Clean Architecture** principles and **BLoC 8+** state management:
+## Architecture & Stack
 
 ```
 lib/
-├── core/                   # Shared theme, constants, widgets, errors, router
-│   ├── constants/          # FirebaseConstants, RouteConstants
-│   ├── errors/             # Failures and ServerExceptions
-│   ├── theme/              # AppColors, Neumorphic themes
-│   └── widgets/            # State widgets, Neumorphic buttons/cards
-├── features/               # Feature modules
-│   ├── auth/               # Firebase Authentication & User State
-│   ├── client/             # Client Home, Join Queue, Active Ticket UI
-│   ├── notifications/      # Live Firestore Notification Stream
-│   ├── organization_admin/ # Org Admin Desks & Analytics
-│   ├── staff/              # Staff Dashboard, Queue BLoC, Call/Skip/Cancel
-│   ├── super_admin/        # Super Admin Organizations & User Setup
-│   └── tickets/            # QueueTicket & CancelledTicket Models, BLoC, Repos
-└── shared/                 # Shared Enums (TicketStatus, UserRole)
+├── core/
+│   ├── constants/          # Firebase & route constants
+│   ├── errors/             # Failures / exceptions
+│   ├── router/             # go_router configuration
+│   ├── services/           # DI, provisioning, admin init
+│   ├── theme/              # AppColors, ThemeCubit, typography
+│   ├── utils/              # FormValidators, PhoneValidators
+│   └── widgets/            # Neumorphic UI + state widgets
+├── features/
+│   ├── auth/               # Login, register, Google, password reset
+│   ├── client/             # Home, orgs, services, join, active ticket
+│   ├── notifications/      # Streams, unread count, mark read
+│   ├── organization_admin/ # Services, staff, analytics
+│   ├── organizations/      # Org entities / repositories
+│   ├── profile/            # Profile & settings (all roles)
+│   ├── services/           # Service desks domain
+│   ├── staff/              # Staff dashboard & queue BLoC
+│   ├── super_admin/        # Orgs, admins, analytics, logs
+│   └── tickets/            # Tickets & cancelled tickets
+└── shared/                 # UserRole, TicketStatus enums
 ```
 
-### Tech Stack Specifications
-- **Framework**: [Flutter](https://flutter.dev) (SDK ^3.12)
-- **Language**: [Dart](https://dart.dev)
-- **State Management**: [flutter_bloc](https://pub.dev/packages/flutter_bloc) (^8.1.3)
-- **Dependency Injection**: [get_it](https://pub.dev/packages/get_it) (^7.6.0)
-- **Routing**: [go_router](https://pub.dev/packages/go_router) (^13.2.0)
-- **Backend Services**: Firebase Authentication, Cloud Firestore
-- **Design System**: Neumorphic & Modern HSL Tailwind/Google Fonts Styling
+### Tech stack
+| Layer | Choice |
+|---|---|
+| Framework | Flutter (SDK ^3.12) |
+| State | `flutter_bloc` ^8.1 |
+| DI | `get_it` ^7.6 |
+| Routing | `go_router` ^13.2 |
+| Backend | Firebase Auth, Cloud Firestore |
+| Social auth | `google_sign_in` |
+| Preferences | `shared_preferences` (theme) |
+| UI | Neumorphic design + Google Fonts |
 
 ---
 
-## 🗄️ Firestore Database Schema
+## Firestore Schema (summary)
 
 ```
-smartq-rwanda (Firestore Root)
+smartq-rwanda
 ├── /users/{userId}
-│   ├── fullName, email, role ("superAdmin" | "orgAdmin" | "staff" | "client")
-│   ├── organizationId, serviceIds []
+│   ├── fullName, email, phoneNumber, role
+│   ├── organizationId, serviceId / serviceIds[], isActive, photoUrl
 │
 ├── /organizations/{orgId}
-│   ├── name, code, createdAt
+│   ├── name, description, location, address, email, phoneNumber
+│   ├── sector ("Healthcare" | "Banking & Financial" | "Government e-Services" | "Other")
+│   ├── isActive, adminId, createdAt
 │
 ├── /services/{serviceId}
-│   ├── name, prefix ("A", "T", "D"), organizationId
-│   ├── currentQueueCount, lastTicketNumber, averageServiceTimeMinutes
+│   ├── name, description, organizationId, counterNumber
+│   ├── averageServiceTimeMinutes, isActive, currentQueueCount, ...
 │
 ├── /tickets/{ticketId}
-│   ├── ticketNumber ("A015"), userId, organizationId, serviceId
-│   ├── status ("waiting" | "serving" | "done" | "cancelled")
-│   ├── counterNumber, staffId, createdAt, calledAt, completedAt
+│   ├── ticketNumber, userId, organizationId, serviceId, phoneNumber
+│   ├── status ("waiting" | "serving" | "done" | "skipped" | "cancelled")
+│   ├── position, estimatedWaitMinutes, counterNumber
+│   ├── createdAt, calledAt, completedAt
 │
-├── /cancelledTickets/{cancelledTicketId}   [Dedicated Snapshot Collection]
-│   ├── originalTicketId, clientId, organizationId, organizationName
-│   ├── serviceId, serviceName, queueNumber, phoneNumber, counterNumber
-│   ├── cancellationReason, cancelledBy, cancelledAt, originalStatus
-│
-└── /notifications/{notificationId}
-    ├── userId, ticketId, type ("ticket_called" | "completed" | "cancelled" | "skipped")
-    ├── title, message, isRead, createdAt
+├── /cancelledTickets/{id}     # Snapshot archive on cancel
+├── /notifications/{id}
+│   ├── userId, ticketId, type, title, message, isRead, createdAt
+└── /admin_logs/{id}           # Super-admin audit trail
 ```
+
+Security rules live in `firestore.rules` (authenticated read/write for app collections). Deploy with Firebase CLI or paste into the Firebase Console.
 
 ---
 
-## 🔐 Firestore Security Rules
-
-Deploy the following rules in your **Firebase Console -> Firestore Database -> Rules**:
-
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-
-    // Authenticated access to users collection
-    match /users/{userId} {
-      allow read, write: if request.auth != null;
-    }
-
-    // Authenticated access to organizations collection
-    match /organizations/{orgId} {
-      allow read, write: if request.auth != null;
-    }
-
-    // Authenticated access to services collection
-    match /services/{serviceId} {
-      allow read, write: if request.auth != null;
-    }
-
-    // Authenticated access to tickets collection
-    match /tickets/{ticketId} {
-      allow read, write: if request.auth != null;
-    }
-
-    // Authenticated access to notifications collection
-    match /notifications/{notificationId} {
-      allow read, write: if request.auth != null;
-    }
-
-    // Authenticated access to cancelledTickets collection
-    match /cancelledTickets/{cancelledTicketId} {
-      allow read, write: if request.auth != null;
-    }
-  }
-}
-```
-
----
-
-## 🚀 Getting Started & Setup
+## Getting Started
 
 ### Prerequisites
-- [Flutter SDK](https://docs.flutter.dev/get-started/install) (v3.12.0 or higher)
-- [Dart SDK](https://dart.dev/get-dart)
-- Chrome Browser (for Flutter Web development) or Android Studio / Xcode (for Mobile)
+- Flutter SDK **3.12+**
+- Firebase project (**smartq-rwanda** or your own)
+- Chrome (web) and/or Android Studio (Android)
 
-### 1. Clone the Repository
+### 1. Clone & install
 ```bash
 git clone https://github.com/Christian-Regnante/SmartQ-MobileApp.git
 cd SmartQ-MobileApp
-```
-
-### 2. Install Dependencies
-```bash
 flutter pub get
 ```
 
-### 3. Run Static Analysis & Verification
+### 2. Firebase config
+Ensure these files match your Firebase project:
+- `android/app/google-services.json`
+- `lib/firebase_options.dart`
+
+**Android Google Sign-In:** add your machine’s **debug SHA-1** (and release SHA-1 when shipping) to the Firebase Android app, then re-download `google-services.json` if needed.
+
+```bash
+keytool -list -v -keystore %USERPROFILE%\.android\debug.keystore -alias androiddebugkey -storepass android -keypass android
+```
+
+**Auth:** enable **Email/Password** and **Google** in Firebase Authentication. Confirm the **Password reset** email template is enabled.
+
+### 3. Analyze & run
 ```bash
 flutter analyze
+flutter run -d chrome      # web
+flutter run -d android     # device / emulator
 ```
 
-### 4. Launch Application
-
-#### Flutter Web (Debug Mode):
-```bash
-flutter run -d chrome
-```
-
-#### Android Device / Emulator:
-```bash
-flutter run -d android
-```
-
----
-
-## 🧪 Testing & Code Quality
-Run unit and bloc tests:
+### 4. Tests
 ```bash
 flutter test
 ```
 
 ---
 
-## 📄 License
-Distributed under the **MIT License**. See `LICENSE` for more details.
+## Notable Product Rules
+- Client registration requires a Rwanda mobile number: **`+2507XXXXXXXX`**.
+- Google users can add/edit phone from **Profile**.
+- Inactive organizations show as **INACTIVE** on Overview; Overview stats count **active** orgs/admins.
+- CRUD dialogs for orgs, admins, staff, and services validate required fields before saving.
+
+---
+
+## License
+Distributed under the **MIT License** (see repository license terms if present).
