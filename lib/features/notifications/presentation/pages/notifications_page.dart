@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/neumorphic_card.dart';
@@ -18,6 +19,17 @@ class NotificationsPage extends StatefulWidget {
 
 class _NotificationsPageState extends State<NotificationsPage> {
   final _notificationDataSource = NotificationRemoteDataSource();
+
+  Future<void> _onNotificationTap(NotificationModel notif) async {
+    if (!notif.isRead) {
+      await _notificationDataSource.markAsRead(notif.id);
+    }
+    if (!mounted) return;
+    final ticketId = notif.ticketId;
+    if (ticketId != null && ticketId.isNotEmpty) {
+      context.push('/client/ticket/$ticketId');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,60 +93,97 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
                 return NeumorphicCard(
                   borderRadius: 16,
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.zero,
                   backgroundColor: isRead ? AppColors.surface : AppColors.surfaceContainerLow,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: _getIconColor(notif.type).withValues(alpha: 0.15),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          _getIcon(notif.type),
-                          color: _getIconColor(notif.type),
-                          size: 20,
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  onTap: () => _onNotificationTap(notif),
+                  child: IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (!isRead)
+                          Container(
+                            width: 4,
+                            decoration: BoxDecoration(
+                              color: AppColors.primary,
+                              borderRadius: const BorderRadius.horizontal(
+                                left: Radius.circular(16),
+                              ),
+                            ),
+                          ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
-                                  child: Text(
-                                    notif.title,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: isRead ? FontWeight.w600 : FontWeight.w800,
-                                      color: AppColors.onSurface,
-                                    ),
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: _getIconColor(notif.type).withValues(alpha: 0.15),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    _getIcon(notif.type),
+                                    color: _getIconColor(notif.type),
+                                    size: 20,
                                   ),
                                 ),
-                                Text(
-                                  timeStr,
-                                  style: TextStyle(fontSize: 11, color: AppColors.outline),
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          if (!isRead) ...[
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 5, right: 6),
+                                              child: Container(
+                                                width: 8,
+                                                height: 8,
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.primary,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                          Expanded(
+                                            child: Text(
+                                              notif.title,
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: isRead ? FontWeight.w600 : FontWeight.w800,
+                                                color: AppColors.onSurface,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            timeStr,
+                                            style: TextStyle(fontSize: 11, color: AppColors.outline),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        notif.message,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: AppColors.onSurfaceVariant,
+                                          height: 1.3,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              notif.message,
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: AppColors.onSurfaceVariant,
-                                height: 1.3,
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               },
