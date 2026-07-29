@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/form_validators.dart';
 import '../../../../core/widgets/neumorphic_card.dart';
 import '../../../../core/widgets/state_widgets.dart';
 import '../../../auth/domain/entities/user_entity.dart';
@@ -47,6 +48,7 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
     }
 
     final cubit = context.read<AdminCubit>();
+    final formKey = GlobalKey<FormState>();
     final emailCtrl = TextEditingController();
     final passCtrl = TextEditingController(text: 'Staff123!');
     final nameCtrl = TextEditingController();
@@ -63,115 +65,35 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
               content: SizedBox(
                 width: 440,
                 child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextField(
-                        controller: nameCtrl,
-                        decoration: const InputDecoration(labelText: 'Full Name'),
-                      ),
-                      const SizedBox(height: 10),
-                      TextField(
-                        controller: emailCtrl,
-                        decoration: const InputDecoration(labelText: 'Staff Email'),
-                        keyboardType: TextInputType.emailAddress,
-                      ),
-                      const SizedBox(height: 10),
-                      TextField(
-                        controller: passCtrl,
-                        decoration: const InputDecoration(labelText: 'Initial Password'),
-                      ),
-                      const SizedBox(height: 16),
-                      DropdownButtonFormField<String>(
-                        initialValue: selectedServiceId,
-                        decoration: const InputDecoration(
-                          labelText: 'Assigned Service Desk',
-                          border: OutlineInputBorder(),
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextFormField(
+                          controller: nameCtrl,
+                          decoration: const InputDecoration(labelText: 'Full Name *'),
+                          validator: (v) => FormValidators.required(v, 'Full name'),
                         ),
-                        items: availableServices.map((service) {
-                          return DropdownMenuItem<String>(
-                            value: service.id,
-                            child: Text(
-                              '${service.name} (${service.counterNumber ?? 'Desk'})',
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (val) {
-                          if (val != null) {
-                            setDialogState(() {
-                              selectedServiceId = val;
-                            });
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              actions: [
-                TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-                ElevatedButton(
-                  onPressed: () {
-                    if (emailCtrl.text.isNotEmpty && nameCtrl.text.isNotEmpty && selectedServiceId.isNotEmpty) {
-                      cubit.provisionStaff(
-                        email: emailCtrl.text.trim(),
-                        password: passCtrl.text.trim(),
-                        fullName: nameCtrl.text.trim(),
-                        organizationId: organizationId,
-                        serviceId: selectedServiceId,
-                      );
-                      Navigator.pop(ctx);
-                    }
-                  },
-                  child: const Text('Provision Account'),
-                ),
-              ],
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  void _showEditStaffDialog(String organizationId, UserEntity staff, List<ServiceEntity> availableServices) {
-    final cubit = context.read<AdminCubit>();
-    final nameCtrl = TextEditingController(text: staff.fullName);
-    final emailCtrl = TextEditingController(text: staff.email);
-    String selectedServiceId = staff.serviceId ?? (availableServices.isNotEmpty ? availableServices.first.id : '');
-    bool isActive = staff.isActive;
-
-    showDialog(
-      context: context,
-      builder: (ctx) => BlocProvider.value(
-        value: cubit,
-        child: StatefulBuilder(
-          builder: (dCtx, setDialogState) {
-            return AlertDialog(
-              title: const Text('Edit Staff Member'),
-              content: SizedBox(
-                width: 440,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextField(
-                        controller: nameCtrl,
-                        decoration: const InputDecoration(labelText: 'Full Name'),
-                      ),
-                      const SizedBox(height: 10),
-                      TextField(
-                        controller: emailCtrl,
-                        decoration: const InputDecoration(labelText: 'Staff Email'),
-                        keyboardType: TextInputType.emailAddress,
-                      ),
-                      const SizedBox(height: 16),
-                      if (availableServices.isNotEmpty)
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: emailCtrl,
+                          decoration: const InputDecoration(labelText: 'Staff Email *'),
+                          keyboardType: TextInputType.emailAddress,
+                          validator: FormValidators.email,
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: passCtrl,
+                          decoration: const InputDecoration(labelText: 'Initial Password *'),
+                          validator: FormValidators.password,
+                        ),
+                        const SizedBox(height: 16),
                         DropdownButtonFormField<String>(
-                          initialValue: selectedServiceId.isNotEmpty ? selectedServiceId : availableServices.first.id,
+                          initialValue: selectedServiceId,
                           decoration: const InputDecoration(
-                            labelText: 'Assigned Service Desk',
+                            labelText: 'Assigned Service Desk *',
                             border: OutlineInputBorder(),
                           ),
                           items: availableServices.map((service) {
@@ -190,16 +112,10 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
                               });
                             }
                           },
+                          validator: (v) => FormValidators.dropdownRequired(v, 'service desk'),
                         ),
-                      const SizedBox(height: 12),
-                      SwitchListTile(
-                        title: Text('Account Status'),
-                        subtitle: Text(isActive ? 'Active' : 'Disabled'),
-                        value: isActive,
-                        activeThumbColor: AppColors.primary,
-                        onChanged: (val) => setDialogState(() => isActive = val),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -207,17 +123,115 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
                 TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
                 ElevatedButton(
                   onPressed: () {
-                    if (nameCtrl.text.isNotEmpty && emailCtrl.text.isNotEmpty && selectedServiceId.isNotEmpty) {
-                      cubit.updateStaff(
-                        organizationId: organizationId,
-                        staffId: staff.id,
-                        fullName: nameCtrl.text.trim(),
-                        email: emailCtrl.text.trim(),
-                        serviceId: selectedServiceId,
-                        isActive: isActive,
-                      );
-                      Navigator.pop(ctx);
-                    }
+                    if (!(formKey.currentState?.validate() ?? false)) return;
+                    cubit.provisionStaff(
+                      email: emailCtrl.text.trim(),
+                      password: passCtrl.text.trim(),
+                      fullName: nameCtrl.text.trim(),
+                      organizationId: organizationId,
+                      serviceId: selectedServiceId,
+                    );
+                    Navigator.pop(ctx);
+                  },
+                  child: const Text('Provision Account'),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  void _showEditStaffDialog(String organizationId, UserEntity staff, List<ServiceEntity> availableServices) {
+    final cubit = context.read<AdminCubit>();
+    final formKey = GlobalKey<FormState>();
+    final nameCtrl = TextEditingController(text: staff.fullName);
+    final emailCtrl = TextEditingController(text: staff.email);
+    String selectedServiceId = staff.serviceId ?? (availableServices.isNotEmpty ? availableServices.first.id : '');
+    bool isActive = staff.isActive;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => BlocProvider.value(
+        value: cubit,
+        child: StatefulBuilder(
+          builder: (dCtx, setDialogState) {
+            return AlertDialog(
+              title: const Text('Edit Staff Member'),
+              content: SizedBox(
+                width: 440,
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextFormField(
+                          controller: nameCtrl,
+                          decoration: const InputDecoration(labelText: 'Full Name *'),
+                          validator: (v) => FormValidators.required(v, 'Full name'),
+                        ),
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: emailCtrl,
+                          decoration: const InputDecoration(labelText: 'Staff Email *'),
+                          keyboardType: TextInputType.emailAddress,
+                          validator: FormValidators.email,
+                        ),
+                        const SizedBox(height: 16),
+                        if (availableServices.isNotEmpty)
+                          DropdownButtonFormField<String>(
+                            initialValue: selectedServiceId.isNotEmpty ? selectedServiceId : availableServices.first.id,
+                            decoration: const InputDecoration(
+                              labelText: 'Assigned Service Desk *',
+                              border: OutlineInputBorder(),
+                            ),
+                            items: availableServices.map((service) {
+                              return DropdownMenuItem<String>(
+                                value: service.id,
+                                child: Text(
+                                  '${service.name} (${service.counterNumber ?? 'Desk'})',
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (val) {
+                              if (val != null) {
+                                setDialogState(() {
+                                  selectedServiceId = val;
+                                });
+                              }
+                            },
+                            validator: (v) => FormValidators.dropdownRequired(v, 'service desk'),
+                          ),
+                        const SizedBox(height: 12),
+                        SwitchListTile(
+                          title: const Text('Account Status'),
+                          subtitle: Text(isActive ? 'Active' : 'Disabled'),
+                          value: isActive,
+                          activeThumbColor: AppColors.primary,
+                          onChanged: (val) => setDialogState(() => isActive = val),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+                ElevatedButton(
+                  onPressed: () {
+                    if (!(formKey.currentState?.validate() ?? false)) return;
+                    cubit.updateStaff(
+                      organizationId: organizationId,
+                      staffId: staff.id,
+                      fullName: nameCtrl.text.trim(),
+                      email: emailCtrl.text.trim(),
+                      serviceId: selectedServiceId,
+                      isActive: isActive,
+                    );
+                    Navigator.pop(ctx);
                   },
                   child: const Text('Save Changes'),
                 ),
