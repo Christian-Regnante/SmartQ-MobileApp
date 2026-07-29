@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../auth/domain/entities/user_entity.dart';
 import '../../../organizations/domain/entities/organization_entity.dart';
+import '../../domain/entities/national_analytics_entity.dart';
 import '../../domain/repositories/super_admin_repository.dart';
 
 abstract class SuperAdminState extends Equatable {
@@ -20,15 +21,17 @@ class SuperAdminLoadedState extends SuperAdminState {
   final List<OrganizationEntity> organizations;
   final List<UserEntity> orgAdmins;
   final List<Map<String, dynamic>> logs;
+  final NationalAnalyticsEntity analytics;
 
   const SuperAdminLoadedState({
     required this.organizations,
     required this.orgAdmins,
     required this.logs,
+    required this.analytics,
   });
 
   @override
-  List<Object?> get props => [organizations, orgAdmins, logs];
+  List<Object?> get props => [organizations, orgAdmins, logs, analytics];
 }
 
 class SuperAdminErrorState extends SuperAdminState {
@@ -51,8 +54,14 @@ class SuperAdminCubit extends Cubit<SuperAdminState> {
       final orgs = await repository.getAllOrganizations();
       final admins = await repository.getOrgAdmins();
       final logs = await repository.getSystemAuditLogs();
+      final analytics = await repository.getNationalAnalytics();
       if (isClosed) return;
-      emit(SuperAdminLoadedState(organizations: orgs, orgAdmins: admins, logs: logs));
+      emit(SuperAdminLoadedState(
+        organizations: orgs,
+        orgAdmins: admins,
+        logs: logs,
+        analytics: analytics,
+      ));
     } catch (e) {
       if (isClosed) return;
       final msg = e is Failure ? e.message : e.toString();
@@ -67,6 +76,7 @@ class SuperAdminCubit extends Cubit<SuperAdminState> {
     required String address,
     required String phoneNumber,
     required String email,
+    String sector = 'Other',
   }) async {
     try {
       await repository.createOrganization(
@@ -76,6 +86,7 @@ class SuperAdminCubit extends Cubit<SuperAdminState> {
         address: address,
         phoneNumber: phoneNumber,
         email: email,
+        sector: sector,
       );
       if (!isClosed) {
         loadMasterDashboard();
@@ -96,6 +107,7 @@ class SuperAdminCubit extends Cubit<SuperAdminState> {
     required String phoneNumber,
     required String email,
     required bool isActive,
+    String sector = 'Other',
   }) async {
     try {
       await repository.updateOrganization(
@@ -107,6 +119,7 @@ class SuperAdminCubit extends Cubit<SuperAdminState> {
         phoneNumber: phoneNumber,
         email: email,
         isActive: isActive,
+        sector: sector,
       );
       if (!isClosed) {
         loadMasterDashboard();

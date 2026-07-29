@@ -2,12 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/constants/firebase_constants.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/services/user_provisioning_service.dart';
+import '../../../../shared/enums/ticket_status.dart';
 import '../../../../shared/enums/user_role.dart';
 import '../../../auth/data/models/user_model.dart';
 import '../../../organizations/data/models/organization_model.dart';
+import '../../domain/entities/national_analytics_entity.dart';
 
 abstract class SuperAdminRemoteDataSource {
   Future<List<OrganizationModel>> getAllOrganizations();
+  Future<NationalAnalyticsEntity> getNationalAnalytics();
   Future<void> createOrganization({
     required String name,
     required String description,
@@ -15,6 +18,7 @@ abstract class SuperAdminRemoteDataSource {
     required String address,
     required String phoneNumber,
     required String email,
+    String sector = 'Other',
   });
   Future<void> updateOrganization({
     required String id,
@@ -25,6 +29,7 @@ abstract class SuperAdminRemoteDataSource {
     required String phoneNumber,
     required String email,
     required bool isActive,
+    String sector = 'Other',
   });
   Future<void> deleteOrganization(String organizationId);
   Future<void> toggleOrganizationStatus(String organizationId, bool isActive);
@@ -130,6 +135,130 @@ class SuperAdminRemoteDataSourceImpl implements SuperAdminRemoteDataSource {
   }
 
   @override
+  Future<NationalAnalyticsEntity> getNationalAnalytics() async {
+    try {
+      final orgs = await getAllOrganizations();
+      final now = DateTime.now();
+      final startOfDay = DateTime(now.year, now.month, now.day);
+
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> ticketDocs;
+      try {
+        final ticketSnap = await _firestore
+            .collection(FirebaseConstants.ticketsCollection)
+            .where('createdAt', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
+            .get();
+        ticketDocs = ticketSnap.docs;
+      } catch (_) {
+        final all = await _firestore.collection(FirebaseConstants.ticketsCollection).get();
+        ticketDocs = all.docs.where((d) {
+          final created = (d.data()['createdAt'] as Timestamp?)?.toDate();
+          return created != null && !created.isBefore(startOfDay);
+        }).toList();
+      }
+
+      // Also load active waiting/serving tickets for wait average (may include prior days).
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> activeQueueDocs = const [];
+      try {
+        final waiting = await _firestore
+            .collection(FirebaseConstants.ticketsCollection)
+            .where('status', whereIn: ['waiting', 'serving'])
+            .get();
+        activeQueueDocs = waiting.docs;
+      } catch (_) {
+        final all = await _firestore.collection(FirebaseConstants.ticketsCollection).get();
+        activeQueueDocs = all.docs.where((d) {
+          final status = TicketStatus.fromString(d.data()['status'] as String?);
+          return status == TicketStatus.waiting || status == TicketStatus.serving;
+        }).toList();
+      }
+
+      return _buildAnalytics(
+        orgs: orgs,
+        todayTicketDocs: ticketDocs,
+        activeQueueDocs: activeQueueDocs,
+      );
+    } catch (e) {
+      throw ServerException('Failed to load national analytics: ${e.toString()}');
+    }
+  }
+
+  NationalAnalyticsEntity _buildAnalytics({
+    required List<OrganizationModel> orgs,
+    required List<QueryDocumentSnapshot<Map<String, dynamic>>> todayTicketDocs,
+    required List<QueryDocumentSnapshot<Map<String, dynamic>>> activeQueueDocs,
+  }) {
+    final customersToday = todayTicketDocs.length;
+    final activeOrgs = orgs.where((o) => o.isActive).toList();
+    final activeCounters = activeOrgs.fold<int>(0, (total, o) => total + o.staffCount);
+
+    final waitSamples = activeQueueDocs
+        .map((d) => (d.data()['estimatedWaitMinutes'] as num?)?.toInt() ?? 0)
+        .toList();
+    final avgWait = waitSamples.isEmpty
+        ? 0.0
+        : waitSamples.reduce((a, b) => a + b) / waitSamples.length;
+
+    var done = 0;
+    var failed = 0;
+    for (final doc in todayTicketDocs) {
+      final status = TicketStatus.fromString(doc.data()['status'] as String?);
+      if (status == TicketStatus.done) done++;
+      if (status == TicketStatus.cancelled || status == TicketStatus.skipped) failed++;
+    }
+    final decided = done + failed;
+    final sla = decided == 0 ? 100.0 : (done / decided) * 100.0;
+
+    final sectorTicketCounts = <String, int>{};
+    final orgById = {for (final o in orgs) o.id: o};
+    for (final doc in todayTicketDocs) {
+      final orgId = doc.data()['organizationId'] as String? ?? '';
+      final sector = orgById[orgId]?.sector ?? 'Other';
+      sectorTicketCounts[sector] = (sectorTicketCounts[sector] ?? 0) + 1;
+    }
+
+    late final List<SectorShare> sectorShares;
+    if (sectorTicketCounts.isNotEmpty) {
+      final total = sectorTicketCounts.values.fold<int>(0, (a, b) => a + b);
+      sectorShares = sectorTicketCounts.entries
+          .map(
+            (e) => SectorShare(
+              label: e.key,
+              fraction: total == 0 ? 0 : e.value / total,
+              orgCount: orgs.where((o) => o.sector == e.key).length,
+            ),
+          )
+          .toList()
+        ..sort((a, b) => b.fraction.compareTo(a.fraction));
+    } else {
+      final sectorOrgCounts = <String, int>{};
+      for (final o in orgs) {
+        sectorOrgCounts[o.sector] = (sectorOrgCounts[o.sector] ?? 0) + 1;
+      }
+      final total = orgs.isEmpty ? 0 : orgs.length;
+      sectorShares = sectorOrgCounts.entries
+          .map(
+            (e) => SectorShare(
+              label: e.key,
+              fraction: total == 0 ? 0 : e.value / total,
+              orgCount: e.value,
+            ),
+          )
+          .toList()
+        ..sort((a, b) => b.fraction.compareTo(a.fraction));
+    }
+
+    return NationalAnalyticsEntity(
+      customersToday: customersToday,
+      activeCounters: activeCounters,
+      avgWaitMinutes: avgWait,
+      platformSlaPercent: sla,
+      sectorShares: sectorShares,
+      registeredOrganizations: orgs.length,
+      activeOrganizations: activeOrgs.length,
+    );
+  }
+
+  @override
   Future<void> createOrganization({
     required String name,
     required String description,
@@ -137,11 +266,18 @@ class SuperAdminRemoteDataSourceImpl implements SuperAdminRemoteDataSource {
     required String address,
     required String phoneNumber,
     required String email,
+    String sector = 'Other',
   }) async {
     try {
       final docRef = _firestore
           .collection(FirebaseConstants.organizationsCollection)
           .doc();
+
+      final resolvedSector = OrganizationModel.resolveSector(
+        sector: sector,
+        name: name,
+        description: description,
+      );
 
       final model = OrganizationModel(
         id: docRef.id,
@@ -151,6 +287,7 @@ class SuperAdminRemoteDataSourceImpl implements SuperAdminRemoteDataSource {
         address: address,
         phoneNumber: phoneNumber,
         email: email,
+        sector: resolvedSector,
         isActive: true,
         serviceCount: 0,
         staffCount: 0,
@@ -174,8 +311,14 @@ class SuperAdminRemoteDataSourceImpl implements SuperAdminRemoteDataSource {
     required String phoneNumber,
     required String email,
     required bool isActive,
+    String sector = 'Other',
   }) async {
     try {
+      final resolvedSector = OrganizationModel.resolveSector(
+        sector: sector,
+        name: name,
+        description: description,
+      );
       await _firestore
           .collection(FirebaseConstants.organizationsCollection)
           .doc(id)
@@ -186,6 +329,7 @@ class SuperAdminRemoteDataSourceImpl implements SuperAdminRemoteDataSource {
         'address': address,
         'phoneNumber': phoneNumber,
         'email': email,
+        'sector': resolvedSector,
         'isActive': isActive,
         'updatedAt': FieldValue.serverTimestamp(),
       });

@@ -11,6 +11,7 @@ class OrganizationEntity extends Equatable {
   final String? logoUrl;
   final String? adminId;
   final String? adminName;
+  final String sector;
   final bool isActive;
   final int serviceCount;
   final int staffCount;
@@ -27,6 +28,7 @@ class OrganizationEntity extends Equatable {
     this.logoUrl,
     this.adminId,
     this.adminName,
+    this.sector = 'Other',
     this.isActive = true,
     this.serviceCount = 0,
     this.staffCount = 0,
@@ -45,6 +47,7 @@ class OrganizationEntity extends Equatable {
         logoUrl,
         adminId,
         adminName,
+        sector,
         isActive,
         serviceCount,
         staffCount,

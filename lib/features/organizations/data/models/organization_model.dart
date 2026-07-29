@@ -13,18 +13,52 @@ class OrganizationModel extends OrganizationEntity {
     super.logoUrl,
     super.adminId,
     super.adminName,
+    super.sector,
     super.isActive,
     super.serviceCount,
     super.staffCount,
     required super.createdAt,
   });
 
+  static String resolveSector({
+    String? sector,
+    required String name,
+    String? description,
+  }) {
+    final explicit = sector?.trim();
+    if (explicit != null && explicit.isNotEmpty) return explicit;
+
+    final text = '$name ${description ?? ''}'.toLowerCase();
+    if (text.contains('hospital') ||
+        text.contains('clinic') ||
+        text.contains('health') ||
+        text.contains('chub') ||
+        text.contains('faisal') ||
+        text.contains('medical')) {
+      return 'Healthcare';
+    }
+    if (text.contains('bank') || text.contains('financ') || text.contains('microfinance')) {
+      return 'Banking & Financial';
+    }
+    if (text.contains('gov') ||
+        text.contains('ministr') ||
+        text.contains('e-service') ||
+        text.contains('municip') ||
+        text.contains('rra') ||
+        text.contains('rssb')) {
+      return 'Government e-Services';
+    }
+    return 'Other';
+  }
+
   factory OrganizationModel.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
     final data = doc.data() ?? {};
+    final name = data['name'] as String? ?? '';
+    final description = data['description'] as String?;
     return OrganizationModel(
       id: doc.id,
-      name: data['name'] as String? ?? '',
-      description: data['description'] as String?,
+      name: name,
+      description: description,
       location: data['location'] as String? ?? 'Kigali',
       address: data['address'] as String?,
       phoneNumber: data['phoneNumber'] as String?,
@@ -32,6 +66,11 @@ class OrganizationModel extends OrganizationEntity {
       logoUrl: data['logoUrl'] as String?,
       adminId: data['adminId'] as String?,
       adminName: data['adminName'] as String?,
+      sector: resolveSector(
+        sector: data['sector'] as String?,
+        name: name,
+        description: description,
+      ),
       isActive: data['isActive'] as bool? ?? true,
       serviceCount: (data['serviceCount'] as num?)?.toInt() ?? 0,
       staffCount: (data['staffCount'] as num?)?.toInt() ?? 0,
@@ -50,6 +89,7 @@ class OrganizationModel extends OrganizationEntity {
     String? logoUrl,
     String? adminId,
     String? adminName,
+    String? sector,
     bool? isActive,
     int? serviceCount,
     int? staffCount,
@@ -66,6 +106,7 @@ class OrganizationModel extends OrganizationEntity {
       logoUrl: logoUrl ?? this.logoUrl,
       adminId: adminId ?? this.adminId,
       adminName: adminName ?? this.adminName,
+      sector: sector ?? this.sector,
       isActive: isActive ?? this.isActive,
       serviceCount: serviceCount ?? this.serviceCount,
       staffCount: staffCount ?? this.staffCount,
@@ -84,6 +125,7 @@ class OrganizationModel extends OrganizationEntity {
       'logoUrl': logoUrl,
       'adminId': adminId,
       'adminName': adminName,
+      'sector': sector,
       'isActive': isActive,
       'serviceCount': serviceCount,
       'staffCount': staffCount,
