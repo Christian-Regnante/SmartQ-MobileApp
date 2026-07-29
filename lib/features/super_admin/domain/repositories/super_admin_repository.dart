@@ -1,8 +1,10 @@
 import '../../../auth/domain/entities/user_entity.dart';
 import '../../../organizations/domain/entities/organization_entity.dart';
+import '../entities/national_analytics_entity.dart';
 
 abstract class SuperAdminRepository {
   Future<List<OrganizationEntity>> getAllOrganizations();
+  Future<NationalAnalyticsEntity> getNationalAnalytics();
   Future<void> createOrganization({
     required String name,
     required String description,
@@ -10,6 +12,7 @@ abstract class SuperAdminRepository {
     required String address,
     required String phoneNumber,
     required String email,
+    String sector = 'Other',
   });
   Future<void> updateOrganization({
     required String id,
@@ -20,6 +23,7 @@ abstract class SuperAdminRepository {
     required String phoneNumber,
     required String email,
     required bool isActive,
+    String sector = 'Other',
   });
   Future<void> deleteOrganization(String organizationId);
   Future<void> toggleOrganizationStatus(String organizationId, bool isActive);
