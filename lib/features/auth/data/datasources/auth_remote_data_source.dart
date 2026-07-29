@@ -17,6 +17,7 @@ abstract class AuthRemoteDataSource {
     String? phoneNumber,
   });
   Future<UserModel> signInWithGoogle();
+  Future<UserModel> updatePhoneNumber(String phoneNumber);
   Future<void> logout();
   Future<void> sendPasswordResetEmail(String email);
   Future<UserModel?> getUserProfile(String uid);
@@ -233,6 +234,33 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw const AuthException('Google Sign-In failed or cancelled. Please use Email Sign-In.');
       }
       throw AuthException('Google Sign-In error: $errStr');
+    }
+  }
+
+  @override
+  Future<UserModel> updatePhoneNumber(String phoneNumber) async {
+    try {
+      final user = _firebaseAuth.currentUser;
+      if (user == null) throw const AuthException('You must be signed in to update your phone number');
+
+      final trimmed = phoneNumber.trim();
+      if (trimmed.isEmpty) throw const AuthException('Phone number is required');
+
+      await _firestore.collection(FirebaseConstants.usersCollection).doc(user.uid).set(
+        {
+          'phoneNumber': trimmed,
+          'updatedAt': FieldValue.serverTimestamp(),
+        },
+        SetOptions(merge: true),
+      );
+
+      final profile = await getUserProfile(user.uid);
+      if (profile == null) throw const AuthException('Failed to load updated profile');
+      return profile;
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      throw AuthException('Failed to update phone number: $e');
     }
   }
 
