@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../../../../core/constants/firebase_constants.dart';
 import '../../../../core/errors/exceptions.dart';
@@ -200,13 +201,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return newModel;
     } on FirebaseAuthException catch (e) {
       throw AuthException(e.message ?? 'Google Sign-In failed');
+    } on PlatformException catch (e) {
+      final errStr = e.toString();
+      if (errStr.contains('DEVELOPER_ERROR') || e.code == '10') {
+        throw const AuthException('Google Sign-In requires SHA-1 fingerprint configuration in Firebase Console for Android. Please use Email Sign-In.');
+      }
+      if (errStr.contains('popup_closed') || errStr.contains('canceled') || e.code == 'sign_in_canceled') {
+        throw const AuthException('Google Sign-In was cancelled.');
+      }
+      throw AuthException('Google Sign-In error: ${e.message}');
     } catch (e) {
       final errStr = e.toString();
-      if (errStr.contains('popup_closed') || errStr.contains('canceled')) {
-        throw const AuthException('Google Sign-In popup was closed.');
-      }
-      if (errStr.contains('invalid_client')) {
-        throw const AuthException('Google Web OAuth Client ID not configured. Please use Email Sign-In.');
+      if (errStr.contains('popup_closed') || errStr.contains('canceled') || errStr.contains('DEVELOPER_ERROR')) {
+        throw const AuthException('Google Sign-In failed or cancelled. Please use Email Sign-In.');
       }
       throw AuthException('Google Sign-In error: $errStr');
     }
@@ -214,7 +221,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<void> logout() async {
-    await _googleSignIn.signOut();
+    try {
+      await _googleSignIn.signOut();
+    } catch (_) {}
     await _firebaseAuth.signOut();
   }
 

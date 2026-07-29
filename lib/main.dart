@@ -14,16 +14,21 @@ import 'features/auth/presentation/bloc/auth_bloc.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Filter out transient Flutter web engine assertions caused by Chrome window visualViewport resizing
+  // Filter out transient Flutter web engine assertions and background platform socket errors
   FlutterError.onError = (FlutterErrorDetails details) {
-    if (details.exception.toString().contains('ViewInsets cannot be negative')) {
+    final err = details.exception.toString();
+    if (err.contains('ViewInsets cannot be negative') || err.contains('DEVELOPER_ERROR')) {
       return;
     }
     FlutterError.presentError(details);
   };
 
   PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
-    if (error.toString().contains('ViewInsets cannot be negative')) {
+    final errStr = error.toString();
+    if (errStr.contains('ViewInsets cannot be negative') ||
+        errStr.contains('DEVELOPER_ERROR') ||
+        errStr.contains('Software caused connection abort') ||
+        errStr.contains('Broken pipe')) {
       return true;
     }
     return false;

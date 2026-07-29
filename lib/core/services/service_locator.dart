@@ -150,6 +150,6 @@ Future<void> initServiceLocator() async {
     () => SuperAdminCubit(repository: sl()),
   );
 
-  // Initialize Default Super Admin Account in Backend
-  await sl<AdminInitializationService>().initializeDefaultSuperAdmin();
+  // Initialize Default Super Admin Account asynchronously (non-blocking)
+  sl<AdminInitializationService>().initializeDefaultSuperAdmin().catchError((_) {});
 }
