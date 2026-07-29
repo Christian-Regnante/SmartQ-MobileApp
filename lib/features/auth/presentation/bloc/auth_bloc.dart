@@ -15,6 +15,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthLoginRequested>(_onAuthLoginRequested);
     on<AuthRegisterRequested>(_onAuthRegisterRequested);
     on<AuthGoogleSignInRequested>(_onAuthGoogleSignInRequested);
+    on<AuthUpdatePhoneRequested>(_onAuthUpdatePhoneRequested);
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
 
     _authSubscription = authRepository.authStateChanges.listen((user) {
@@ -100,6 +101,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthFailureState(message: e.message));
     } catch (e) {
       emit(AuthFailureState(message: e.toString()));
+    }
+  }
+
+  Future<void> _onAuthUpdatePhoneRequested(
+    AuthUpdatePhoneRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    final current = state;
+    if (current is! Authenticated) return;
+
+    try {
+      final user = await authRepository.updatePhoneNumber(event.phoneNumber);
+      emit(Authenticated(user: user));
+    } on AuthFailure catch (e) {
+      emit(AuthFailureState(message: e.message));
+      emit(current);
+    } catch (e) {
+      emit(AuthFailureState(message: e.toString()));
+      emit(current);
     }
   }
 
