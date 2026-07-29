@@ -10,6 +10,7 @@ abstract class AuthRepository {
     String? phoneNumber,
   });
   Future<UserEntity> signInWithGoogle();
+  Future<UserEntity> updatePhoneNumber(String phoneNumber);
   Future<void> logout();
   Future<void> sendPasswordResetEmail(String email);
   Future<UserEntity?> getCurrentUser();
