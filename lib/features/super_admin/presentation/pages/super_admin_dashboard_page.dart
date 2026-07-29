@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/form_validators.dart';
 import '../../../../core/widgets/neumorphic_card.dart';
 import '../../../../core/widgets/stat_card.dart';
 import '../../../../core/widgets/state_widgets.dart';
@@ -24,60 +25,90 @@ class _SuperAdminDashboardPageState extends State<SuperAdminDashboardPage> {
 
   void _showAddOrgDialog() {
     final cubit = context.read<SuperAdminCubit>();
+    final formKey = GlobalKey<FormState>();
     final nameCtrl = TextEditingController();
     final descCtrl = TextEditingController();
     final locCtrl = TextEditingController(text: 'Kigali, Rwanda');
     final emailCtrl = TextEditingController();
+    String selectedSector = 'Healthcare';
 
     showDialog(
       context: context,
       builder: (ctx) => BlocProvider.value(
         value: cubit,
-        child: AlertDialog(
-          title: const Text('Register New Institution'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameCtrl,
-                decoration: const InputDecoration(labelText: 'Organization Name'),
+        child: StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: const Text('Register New Institution'),
+              content: SingleChildScrollView(
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextFormField(
+                        controller: nameCtrl,
+                        decoration: const InputDecoration(labelText: 'Organization Name *'),
+                        validator: (v) => FormValidators.required(v, 'Organization name'),
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        controller: descCtrl,
+                        decoration: const InputDecoration(labelText: 'Description (optional)'),
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        controller: locCtrl,
+                        decoration: const InputDecoration(labelText: 'Location / Address *'),
+                        validator: (v) => FormValidators.required(v, 'Location'),
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        controller: emailCtrl,
+                        decoration: const InputDecoration(labelText: 'Official Email *'),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: FormValidators.email,
+                      ),
+                      const SizedBox(height: 10),
+                      DropdownButtonFormField<String>(
+                        initialValue: selectedSector,
+                        decoration: const InputDecoration(labelText: 'Sector *'),
+                        items: const [
+                          DropdownMenuItem(value: 'Healthcare', child: Text('Healthcare')),
+                          DropdownMenuItem(value: 'Banking & Financial', child: Text('Banking & Financial')),
+                          DropdownMenuItem(value: 'Government e-Services', child: Text('Government e-Services')),
+                          DropdownMenuItem(value: 'Other', child: Text('Other')),
+                        ],
+                        onChanged: (val) {
+                          if (val != null) setDialogState(() => selectedSector = val);
+                        },
+                        validator: (v) => FormValidators.dropdownRequired(v, 'sector'),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: descCtrl,
-                decoration: const InputDecoration(labelText: 'Description'),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: locCtrl,
-                decoration: const InputDecoration(labelText: 'Location / Address'),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: emailCtrl,
-                decoration: const InputDecoration(labelText: 'Official Email'),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
-            ElevatedButton(
-              onPressed: () {
-                if (nameCtrl.text.isNotEmpty) {
-                  cubit.addOrganization(
-                    name: nameCtrl.text.trim(),
-                    description: descCtrl.text.trim(),
-                    location: locCtrl.text.trim(),
-                    address: locCtrl.text.trim(),
-                    phoneNumber: '+250 788 000 111',
-                    email: emailCtrl.text.trim(),
-                  );
-                  Navigator.pop(ctx);
-                }
-              },
-              child: const Text('Register Institution'),
-            ),
-          ],
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+                ElevatedButton(
+                  onPressed: () {
+                    if (!(formKey.currentState?.validate() ?? false)) return;
+                    cubit.addOrganization(
+                      name: nameCtrl.text.trim(),
+                      description: descCtrl.text.trim(),
+                      location: locCtrl.text.trim(),
+                      address: locCtrl.text.trim(),
+                      phoneNumber: '+250788000111',
+                      email: emailCtrl.text.trim(),
+                      sector: selectedSector,
+                    );
+                    Navigator.pop(ctx);
+                  },
+                  child: const Text('Register Institution'),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -118,8 +149,19 @@ class _SuperAdminDashboardPageState extends State<SuperAdminDashboardPage> {
               // Master Platform Dynamic Stats Grid
               BlocBuilder<SuperAdminCubit, SuperAdminState>(
                 builder: (context, state) {
-                  final orgCount = state is SuperAdminLoadedState ? state.organizations.length.toString() : '0';
-                  final adminCount = state is SuperAdminLoadedState ? state.orgAdmins.length.toString() : '0';
+                  final orgs = state is SuperAdminLoadedState ? state.organizations : const [];
+                  final admins = state is SuperAdminLoadedState ? state.orgAdmins : const [];
+                  final activeOrgs = orgs.where((o) => o.isActive).toList();
+                  final activeOrgIds = activeOrgs.map((o) => o.id).toSet();
+                  final activeAdminCount = admins
+                      .where((a) => a.organizationId != null && activeOrgIds.contains(a.organizationId))
+                      .length;
+                  final orgHealth = orgs.isEmpty
+                      ? 100
+                      : ((activeOrgs.length / orgs.length) * 100).round();
+                  final ticketsToday = state is SuperAdminLoadedState
+                      ? state.analytics.customersToday.toString()
+                      : '0';
 
                   return GridView.count(
                     shrinkWrap: true,
@@ -130,26 +172,26 @@ class _SuperAdminDashboardPageState extends State<SuperAdminDashboardPage> {
                     childAspectRatio: 1.2,
                     children: [
                       StatCard(
-                        label: 'Registered Orgs',
-                        value: orgCount,
+                        label: 'Active Orgs',
+                        value: orgs.isEmpty ? '0' : '${activeOrgs.length} / ${orgs.length}',
                         icon: Icons.apartment_rounded,
                         valueColor: AppColors.primary,
                       ),
                       StatCard(
                         label: 'National Tickets Today',
-                        value: '0',
+                        value: ticketsToday,
                         icon: Icons.confirmation_number_rounded,
                         valueColor: AppColors.success,
                       ),
-                      const StatCard(
+                      StatCard(
                         label: 'Platform Health',
-                        value: '100%',
+                        value: '$orgHealth%',
                         icon: Icons.health_and_safety_outlined,
                         valueColor: Colors.teal,
                       ),
                       StatCard(
                         label: 'Active Org Admins',
-                        value: adminCount,
+                        value: activeAdminCount.toString(),
                         icon: Icons.admin_panel_settings_outlined,
                         valueColor: Colors.purple,
                       ),
@@ -251,15 +293,16 @@ class _SuperAdminDashboardPageState extends State<SuperAdminDashboardPage> {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: AppColors.success.withValues(alpha: 0.15),
+                                  color: (org.isActive ? AppColors.success : AppColors.error)
+                                      .withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
-                                  'ACTIVE',
+                                  org.isActive ? 'ACTIVE' : 'INACTIVE',
                                   style: TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w800,
-                                    color: AppColors.success,
+                                    color: org.isActive ? AppColors.success : AppColors.error,
                                   ),
                                 ),
                               ),
