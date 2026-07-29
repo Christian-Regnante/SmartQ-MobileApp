@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "1097516457844-lbvn3mgi25uv54amsd40h8qu7lgti2sr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.smartq_mobile_app",
+            "certificate_hash": "ab2a1c46df82c6439b6411ab9a9a972edc28b163"
+          }
+        },
+        {
           "client_id": "1097516457844-h6a32fu2gkngr5kl6iqo0rcvgos0ol3s.apps.googleusercontent.com",
           "client_type": 3
         }
