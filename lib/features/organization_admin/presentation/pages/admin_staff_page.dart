@@ -248,7 +248,7 @@ class _AdminStaffPageState extends State<AdminStaffPage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Delete Staff Member'),
+        title: const Text('Delete Staff Member'),
         content: Text('Are you sure you want to delete ${staff.fullName}? This action will remove the staff profile from Firestore.'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),

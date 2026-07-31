@@ -218,7 +218,7 @@ class _SuperAdminOrgsPageState extends State<SuperAdminOrgsPage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Delete Organization'),
+        title: const Text('Delete Organization'),
         content: Text(
           'Are you sure you want to delete ${org.name}? This will remove the institution and disassociate assigned admins and services.',
         ),

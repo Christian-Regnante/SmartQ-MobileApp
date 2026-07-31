@@ -149,7 +149,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text('Organization Control Panel'),
+        title: const Text('Organization Control Panel'),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -185,7 +185,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                         ),
                       ),
                       icon: const Icon(Icons.add_rounded),
-                      label: Text('Add Service Desk'),
+                      label: const Text('Add Service Desk'),
                       onPressed: () => _showAddServiceDialog(orgId),
                     ),
                   ),

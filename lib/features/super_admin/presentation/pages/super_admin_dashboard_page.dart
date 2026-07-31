@@ -122,7 +122,7 @@ class _SuperAdminDashboardPageState extends State<SuperAdminDashboardPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text('SmartQ Master Portal'),
+        title: const Text('SmartQ Master Portal'),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -215,7 +215,7 @@ class _SuperAdminDashboardPageState extends State<SuperAdminDashboardPage> {
                         ),
                       ),
                       icon: const Icon(Icons.domain_add_rounded),
-                      label: Text('Register Institution'),
+                      label: const Text('Register Institution'),
                       onPressed: _showAddOrgDialog,
                     ),
                   ),

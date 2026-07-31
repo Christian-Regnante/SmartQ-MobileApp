@@ -227,7 +227,7 @@ class _SuperAdminAdminsPageState extends State<SuperAdminAdminsPage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Delete Org Administrator'),
+        title: const Text('Delete Org Administrator'),
         content: Text('Are you sure you want to delete ${admin.fullName}? This will remove the admin user and unassign their organization.'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),

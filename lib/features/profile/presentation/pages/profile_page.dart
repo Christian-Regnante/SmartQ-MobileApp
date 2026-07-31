@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import '../../../../core/constants/route_constants.dart';
+
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/theme_cubit.dart';
-import '../../../../core/utils/phone_validators.dart';
 import '../../../../core/widgets/neumorphic_button.dart';
 import '../../../../core/widgets/neumorphic_card.dart';
-import '../../../../core/widgets/neumorphic_input.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
 import '../../../auth/presentation/bloc/auth_state.dart';
@@ -23,96 +20,80 @@ class _ProfilePageState extends State<ProfilePage> {
   String _selectedLanguage = 'English';
   bool _expectingPhoneUpdate = false;
 
-  void _onLogoutSubmitted() {
+  void _onEditPhone(String? currentPhone) {
+    final controller = TextEditingController(text: currentPhone ?? '');
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirm Logout'),
-        content: const Text('Are you sure you want to log out of SmartQ Rwanda?'),
+      builder: (dialogCtx) => AlertDialog(
+        title: const Text('Update Phone Number'),
+        content: TextField(
+          controller: controller,
+          keyboardType: TextInputType.phone,
+          decoration: const InputDecoration(
+            hintText: 'e.g. +250 788 000 111',
+            labelText: 'Phone Number',
+          ),
+        ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogCtx),
             child: const Text('Cancel'),
           ),
-          TextButton(
+          ElevatedButton(
             onPressed: () {
-              Navigator.pop(context);
-              context.read<AuthBloc>().add(AuthLogoutRequested());
-              context.go(RouteConstants.login);
+              final newPhone = controller.text.trim();
+              Navigator.pop(dialogCtx);
+              if (newPhone.isNotEmpty) {
+                setState(() => _expectingPhoneUpdate = true);
+                context.read<AuthBloc>().add(AuthUpdatePhoneRequested(phoneNumber: newPhone));
+              }
             },
-            child: Text('Logout', style: TextStyle(color: AppColors.error)),
+            child: const Text('Save'),
           ),
         ],
       ),
     );
   }
 
-  Future<void> _onEditPhone(String? currentPhone) async {
-    final formKey = GlobalKey<FormState>();
-    final controller = TextEditingController(text: currentPhone ?? '');
-    final saved = await showDialog<String>(
+  void _onLogoutSubmitted() {
+    showDialog(
       context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: Text(
-            (currentPhone == null || currentPhone.isEmpty)
-                ? 'Add Phone Number'
-                : 'Edit Phone Number',
+      builder: (dialogCtx) => AlertDialog(
+        title: const Text('Confirm Logout'),
+        content: const Text('Are you sure you want to log out of your SmartQ session?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogCtx),
+            child: const Text('Cancel'),
           ),
-          content: Form(
-            key: formKey,
-            child: NeumorphicInput(
-              controller: controller,
-              labelText: 'Phone Number',
-              hintText: '+250 7XX XXX XXX',
-              keyboardType: TextInputType.phone,
-              prefixIcon: Icon(Icons.phone_outlined, color: AppColors.outline),
-              validator: PhoneValidators.rwandaMobile,
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.error,
+              foregroundColor: Colors.white,
             ),
+            onPressed: () {
+              Navigator.pop(dialogCtx);
+              context.read<AuthBloc>().add(AuthLogoutRequested());
+            },
+            child: const Text('Log Out'),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                if (formKey.currentState?.validate() ?? false) {
-                  Navigator.pop(dialogContext, controller.text.trim());
-                }
-              },
-              child: Text('Save', style: TextStyle(color: AppColors.primary)),
-            ),
-          ],
-        );
-      },
+        ],
+      ),
     );
-
-    // Dispose after the dialog route is fully unmounted to avoid
-    // '_dependents.isEmpty' crashes from TextFormField still listening.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.dispose();
-    });
-
-    if (saved == null || !mounted) return;
-
-    final normalized = saved.replaceAll(RegExp(r'[\s\-\(\)]'), '');
-    setState(() => _expectingPhoneUpdate = true);
-    context.read<AuthBloc>().add(AuthUpdatePhoneRequested(phoneNumber: normalized));
   }
 
   @override
   Widget build(BuildContext context) {
-    final authState = context.watch<AuthBloc>().state;
     final themeCubit = context.watch<ThemeCubit>();
     final isDarkMode = themeCubit.isDarkMode;
-
+    final authState = context.watch<AuthBloc>().state;
     final user = authState is Authenticated ? authState.user : null;
     final userName = user?.fullName ?? 'User Account';
     final userEmail = user?.email ?? 'user@smartq.rw';
     final userRoleStr = user?.role.name ?? 'Client';
-    final hasPhone = user?.phoneNumber != null && user!.phoneNumber!.trim().isNotEmpty;
-    final userPhone = hasPhone ? user!.phoneNumber! : 'Add phone number';
+    final phone = user?.phoneNumber?.trim();
+    final hasPhone = phone != null && phone.isNotEmpty;
+    final userPhone = hasPhone ? phone : 'Add phone number';
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -142,9 +123,10 @@ class _ProfilePageState extends State<ProfilePage> {
             padding: const EdgeInsets.all(20.0),
             child: Column(
               children: [
+                // User Header Card
                 NeumorphicCard(
-                  borderRadius: 24,
-                  padding: const EdgeInsets.all(24),
+                  borderRadius: 20,
+                  padding: const EdgeInsets.all(20),
                   child: Column(
                     children: [
                       Container(
@@ -198,6 +180,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 const SizedBox(height: 24),
+
+                // Settings Card
                 NeumorphicCard(
                   borderRadius: 20,
                   padding: const EdgeInsets.all(12),
@@ -207,7 +191,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       children: [
                         ListTile(
                           leading: Icon(Icons.phone_outlined, color: AppColors.primary),
-                          title: Text(
+                          title: const Text(
                             'Phone Number',
                             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                           ),
@@ -225,7 +209,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         const Divider(height: 1),
                         ListTile(
                           leading: Icon(Icons.language_rounded, color: AppColors.primary),
-                          title: Text(
+                          title: const Text(
                             'App Language',
                             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                           ),
@@ -246,7 +230,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             isDarkMode ? Icons.dark_mode : Icons.dark_mode_outlined,
                             color: AppColors.primary,
                           ),
-                          title: Text(
+                          title: const Text(
                             'Dark Mode',
                             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                           ),
@@ -264,7 +248,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         const Divider(height: 1),
                         ListTile(
                           leading: Icon(Icons.shield_outlined, color: AppColors.primary),
-                          title: Text(
+                          title: const Text(
                             'Privacy & Terms',
                             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
                           ),

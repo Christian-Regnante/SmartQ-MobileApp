@@ -58,7 +58,7 @@ class _TicketsHistoryPageState extends State<TicketsHistoryPage>
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text('My Ticket History'),
+        title: const Text('My Ticket History'),
         centerTitle: true,
         bottom: TabBar(
           controller: _tabController,

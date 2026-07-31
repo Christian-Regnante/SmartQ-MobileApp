@@ -71,7 +71,7 @@ class _JoinQueuePageState extends State<JoinQueuePage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text('Join Queue'),
+        title: const Text('Join Queue'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () => context.pop(),

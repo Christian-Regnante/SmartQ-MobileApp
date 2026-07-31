@@ -134,7 +134,7 @@ class _StaffDashboardPageState extends State<StaffDashboardPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text('Staff Service Desk'),
+        title: const Text('Staff Service Desk'),
         centerTitle: true,
         actions: [
           Switch(
@@ -334,7 +334,7 @@ class _StaffDashboardPageState extends State<StaffDashboardPage> {
                                     ),
                                   ),
                                   icon: const Icon(Icons.cancel_outlined),
-                                  label: Text('Cancel'),
+                                  label: const Text('Cancel'),
                                   onPressed: () => _onCancelServingTicket(servingTicket.id),
                                 ),
                               ),

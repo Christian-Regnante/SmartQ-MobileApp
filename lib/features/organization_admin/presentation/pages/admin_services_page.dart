@@ -250,7 +250,7 @@ class _AdminServicesPageState extends State<AdminServicesPage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Delete Service Desk'),
+        title: const Text('Delete Service Desk'),
         content: Text('Are you sure you want to permanently delete "$serviceName" from Firestore? Staff assignments will be cleaned up.'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),

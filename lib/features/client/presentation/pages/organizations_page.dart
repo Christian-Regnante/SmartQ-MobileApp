@@ -34,7 +34,7 @@ class _OrganizationsPageState extends State<OrganizationsPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text('Organizations'),
+        title: const Text('Organizations'),
         centerTitle: true,
       ),
       body: SafeArea(
