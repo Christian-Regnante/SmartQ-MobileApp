@@ -57,6 +57,21 @@ It streamlines queues across institutions in Rwanda (hospitals, banks, governmen
 
 ---
 
+## 🔑 Default Built-in Super Admin Credentials
+
+SmartQ Rwanda includes a default built-in **Super Admin** account for initial system setup and capstone evaluation. Logging in with these credentials automatically grants full platform access and provisions/enforces the Super Admin profile in Firestore:
+
+| Field | Built-in Value |
+|---|---|
+| **Email** | `christianregnantee@gmail.com` |
+| **Password** | `Superadmin123` |
+| **Role** | `Super Admin` (`role: super_admin`) |
+| **Default Destination** | `/super-admin/dashboard` (SmartQ Master Portal) |
+
+> 💡 **Note**: Upon logging in with these credentials, the authentication engine automatically checks and updates the user's document in Firestore (`/users/{uid}`) with `role: 'super_admin'`, guaranteeing automatic routing to the Super Admin Master Portal.
+
+---
+
 ## Architecture & Stack
 
 ```
